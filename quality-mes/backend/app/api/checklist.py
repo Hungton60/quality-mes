@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, UploadFile, File
 from sqlalchemy.orm import Session
 
 from app.auth.security import get_current_user
@@ -69,3 +69,54 @@ def delete_template(template_id: int, db: Session = Depends(get_db), _token: dic
         raise HTTPException(status_code=404, detail="Khong tim thay checklist")
     db.delete(t)
     db.commit()
+
+
+@router.post("/import-excel")
+def import_checklist_excel(
+    module: str = Query(..., pattern="^(iqc|oqc|ipqc)$"),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    _token: dict = Depends(get_current_user),
+):
+    from io import BytesIO
+    from openpyxl import load_workbook
+
+    contents = file.file.read()
+    wb = load_workbook(BytesIO(contents))
+
+    count = 0
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+        code = str(sheet_name).strip()
+        name = code
+        items = []
+
+        for row in ws.iter_rows(min_row=1, values_only=True):
+            if not row or not row[0]:
+                continue
+            item_name = str(row[0]).strip()
+            if item_name.lower() in ("muc kiem", "item", "ten muc", "no"):  # skip header
+                continue
+            spec = str(row[1]).strip() if len(row) > 1 and row[1] else ""
+            try:
+                min_v = float(row[2]) if len(row) > 2 and row[2] is not None else None
+            except: min_v = None
+            try:
+                max_v = float(row[3]) if len(row) > 3 and row[3] is not None else None
+            except: max_v = None
+
+            items.append({
+                "item_name": item_name,
+                "specification": spec,
+                "standard_min": min_v,
+                "standard_max": max_v,
+            })
+
+        if items:
+            existing = db.query(ChecklistTemplate).filter(ChecklistTemplate.code == code).first()
+            if not existing:
+                db.add(ChecklistTemplate(code=code, name=name, module=module, items=items))
+                count += 1
+
+    db.commit()
+    return {"message": f"Da import {count} checklist tu file Excel"}

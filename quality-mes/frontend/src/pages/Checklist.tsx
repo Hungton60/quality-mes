@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Table, Button, Modal, Form, Input, Space, message, Popconfirm, Card, Select, Tag, InputNumber } from 'antd'
-import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons'
+import { Table, Button, Modal, Form, Input, Space, message, Popconfirm, Card, Select, Tag, InputNumber, Upload } from 'antd'
+import { PlusOutlined, DeleteOutlined, EditOutlined, UploadOutlined } from '@ant-design/icons'
 import api from '../services/api'
 
 interface Checklist {
@@ -122,6 +122,21 @@ export default function ChecklistPage() {
           }}>
             Tao checklist moi
           </Button>
+          <Upload
+            accept=".xlsx"
+            showUploadList={false}
+            customRequest={async (options: any) => {
+              const formData = new FormData()
+              formData.append('file', options.file)
+              try {
+                const res = await api.post(`/checklists/import-excel?module=${moduleFilter || 'iqc'}`, formData)
+                message.success(res.data.message)
+                fetchData()
+              } catch (err: any) { message.error(err.response?.data?.detail || 'Loi import') }
+            }}
+          >
+            <Button icon={<UploadOutlined />}>Import Excel</Button>
+          </Upload>
         </div>
         <Table dataSource={templates} columns={columns} rowKey="id" loading={loading} size="middle" />
 
