@@ -1,574 +1,573 @@
 # Quality MES - HƯỚNG DẪN SỬ DỤNG
 
-## He thong Quan ly Chat luong Nha may San xuat
+## Hệ thống Quản lý Chất lượng Nhà máy Sản xuất
 
 ---
 
-## MUC LUC
+## MỤC LỤC
 
-1. [Cai dat va Chay ung dung](#1-cai-dat-va-chay-ung-dung)
-2. [Dang nhap va Phan quyen](#2-dang-nhap-va-phan-quyen)
-3. [Bang dieu khien (Dashboard)](#3-bang-dieu-khien-dashboard)
-4. [IQC - Kiem tra dau vao](#4-iqc---kiem-tra-dau-vao)
-5. [IPQC - Kiem tra qua trinh](#5-ipqc---kiem-tra-qua-trinh)
-6. [OQC - Kiem tra thanh pham](#6-oqc---kiem-tra-thanh-pham)
-7. [NCR + CAPA - Xu ly su khong phu hop](#7-ncr--capa---xu-ly-su-khong-phu-hop)
-8. [Checklist mau - Tu dong dien muc kiem](#8-checklist-mau---tu-dong-dien-muc-kiem)
-9. [SPC - Bao cao thong ke](#9-spc---bao-cao-thong-ke)
-10. [Thiet bi do & Hieu chuan](#10-thiet-bi-do--hieu-chuan)
-11. [Quan ly nguoi dung](#11-quan-ly-nguoi-dung)
-12. [Nhat ky hoat dong](#12-nhat-ky-hoat-dong)
-13. [Xuat bao cao Excel](#13-xuat-bao-cao-excel)
-14. [Doi mat khau](#14-doi-mat-khau)
-15. [Cai dat PWA (App dien thoai)](#15-cai-dat-pwa-app-dien-thoai)
+1. [Cài đặt và Chạy ứng dụng](#1-cài-đặt-và-chạy-ứng-dụng)
+2. [Đăng nhập và Phân quyền](#2-đăng-nhập-và-phân-quyền)
+3. [Bảng điều khiển (Dashboard)](#3-bảng-điều-khiển-dashboard)
+4. [IQC - Kiểm tra đầu vào](#4-iqc---kiểm-tra-đầu-vào)
+5. [IPQC - Kiểm tra quá trình](#5-ipqc---kiểm-tra-quá-trình)
+6. [OQC - Kiểm tra thành phẩm](#6-oqc---kiểm-tra-thành-phẩm)
+7. [NCR + CAPA - Xử lý sự không phù hợp](#7-ncr--capa---xử-lý-sự-không-phù-hợp)
+8. [Checklist mẫu - Tự động điền mục kiểm](#8-checklist-mẫu---tự-động-điền-mục-kiểm)
+9. [SPC - Báo cáo thống kê](#9-spc---báo-cáo-thống-kê)
+10. [Thiết bị đo & Hiệu chuẩn](#10-thiết-bị-đo--hiệu-chuẩn)
+11. [Quản lý người dùng](#11-quản-lý-người-dùng)
+12. [Nhật ký hoạt động](#12-nhật-ký-hoạt-động)
+13. [Xuất báo cáo Excel](#13-xuất-báo-cáo-excel)
+14. [Đổi mật khẩu](#14-đổi-mật-khẩu)
+15. [Cài đặt PWA (App điện thoại)](#15-cài-đặt-pwa-app-điện-thoại)
 16. [Deploy online 24/7 (Render)](#16-deploy-online-247-render)
-17. [Tich hop API](#17-tich-hop-api)
+17. [Tích hợp API](#17-tích-hợp-api)
 
 ---
 
-## 1. CAI DAT VA CHAY UNG DUNG
+## 1. CÀI ĐẶT VÀ CHẠY ỨNG DỤNG
 
-### Cach 1: Truy cap Online (Render - mien phi 24/7)
+### Cách 1: Truy cập Online (Render - miễn phí 24/7)
 
-Khong can cai dat gi. Mo trinh duyet, vao link:
+Không cần cài đặt gì. Mở trình duyệt, vào link:
 ```
 https://quality-mes-xxx.onrender.com
 ```
-*(Link duoc cap khi deploy, xem chuong 16)*
+*(Link được cấp khi deploy, xem chương 16)*
 
-Tai khoan mac dinh: `admin` / `Admin123`
+Tài khoản mặc định: `admin` / `Admin123`
 
-### Cach 2: Chay tren may ca nhan (Web App)
+### Cách 2: Chạy trên máy cá nhân (Web App)
 
-**Yeu cau:** Python 3.10+, Node.js 18+
+**Yêu cầu:** Python 3.10+, Node.js 18+
 
-*Buoc 1: Cai thu vien Python*
+*Bước 1: Cài thư viện Python*
 ```powershell
 cd quality-mes\backend
 pip install -r requirements.txt
 ```
 
-*Buoc 2: Tao du lieu mau (neu chay lan dau)*
+*Bước 2: Tạo dữ liệu mẫu (nếu chạy lần đầu)*
 ```powershell
 python seed.py
 ```
 
-*Buoc 3: Khoi dong may chu*
+*Bước 3: Khởi động máy chủ*
 ```powershell
 python deploy.py
 ```
 
-May chu hien thi dia chi IP de truy cap trong mang LAN.
+Máy chủ hiển thị địa chỉ IP để truy cập trong mạng LAN.
 
-### Cach 3: Streamlit (Online don gian)
+### Cách 3: Streamlit (Online đơn giản)
 
-1. Vao https://share.streamlit.io
-2. Deploy tu repo GitHub
-3. Giao dien don gian, dung duoc ngay khong can cai dat
-4. Xem them: `streamlit_app.py` trong repo
+1. Vào https://share.streamlit.io
+2. Deploy từ repo GitHub
+3. Giao diện đơn giản, dùng được ngay không cần cài đặt
 
 ---
 
-## 2. DANG NHAP VA PHAN QUYEN
+## 2. ĐĂNG NHẬP VÀ PHÂN QUYỀN
 
-### Tai khoan mac dinh
+### Tài khoản mặc định
 
-| Ten dang nhap | Mat khau | Vai tro | Quyen han |
+| Tên đăng nhập | Mật khẩu | Vai trò | Quyền hạn |
 |---------------|----------|---------|-----------|
-| **admin** | Admin123 | Quan ly | Toan quyen he thong |
-| **qc_manager** | Qc123456 | Truong QC | Xem + Tao phieu, NCR, bao cao |
-| **inspector1** | Insp123456 | Kiem tra vien | Tao phieu kiem tra, nhap ket qua |
-| **inspector2** | Insp123456 | Kiem tra vien | Tao phieu kiem tra, nhap ket qua |
-| **operator** | Oper123456 | Cong nhan | Chi xem duoc ban than |
+| **admin** | Admin123 | Quản lý | Toàn quyền hệ thống |
+| **qc_manager** | Qc123456 | Trưởng QC | Xem + Tạo phiếu, NCR, báo cáo |
+| **inspector1** | Insp123456 | Kiểm tra viên | Tạo phiếu kiểm tra, nhập kết quả |
+| **inspector2** | Insp123456 | Kiểm tra viên | Tạo phiếu kiểm tra, nhập kết quả |
+| **operator** | Oper123456 | Công nhân | Chỉ xem được bản thân |
 
-### Dang ky tai khoan moi
+### Đăng ký tài khoản mới
 
-1. Tai trang dang nhap → Chon tab **Dang ky**
-2. Nhap: Ho ten, Email, Ten dang nhap, Mat khau (toi thieu 6 ky tu)
-3. Tu dang ky chi duoc vai tro **inspector** hoac **operator**
-4. Muon lam **qc_manager** hoac **admin**: phai nho admin tao tai khoan
+1. Tại trang đăng nhập → Chọn tab **Đăng ký**
+2. Nhập: Họ tên, Email, Tên đăng nhập, Mật khẩu (tối thiểu 6 ký tự)
+3. Tự đăng ký chỉ được vai trò **inspector** hoặc **operator**
+4. Muốn làm **qc_manager** hoặc **admin**: phải nhờ admin tạo tài khoản
 
-### Ai co quyen tao tai khoan?
+### Ai có quyền tạo tài khoản?
 
-| Cach tao | Vai tro duoc phep |
+| Cách tạo | Vai trò được phép |
 |----------|-------------------|
-| Tu dang ky (tab Dang ky) | inspector, operator |
-| Admin tao (menu Nguoi dung) | admin, qc_manager, inspector, operator |
+| Tự đăng ký (tab Đăng ký) | inspector, operator |
+| Admin tạo (menu Người dùng) | admin, qc_manager, inspector, operator |
 
-Chi **admin** moi vao duoc menu **Nguoi dung** de tao/sua/xoa tai khoan.
-
----
-
-## 3. BANG DIEU KHIEN (DASHBOARD)
-
-Trang chu hien thi tong quan he thong:
-
-- **Tong phieu kiem tra:** Tong so phieu IQC + IPQC + OQC
-- **Dat / Khong dat / Ty le dat:** Thong ke chat luong
-- **NCR dang mo:** So su khong phu hop chua xu ly
-- **NCR/CAPA qua han:** Canh bao cac viec tre han
-
-Nhan vao cac **card module** de vao trang tuong ung.
-
-Canh bao mau vang xuat hien khi co NCR hoac CAPA qua han.
+Chỉ **admin** mới vào được menu **Người dùng** để tạo/sửa/xóa tài khoản.
 
 ---
 
-## 4. IQC - KIEM TRA DAU VAO
+## 3. BẢNG ĐIỀU KHIỂN (DASHBOARD)
 
-Kiem tra chat luong **nguyen vat lieu** khi nhap ve tu nha cung cap.
+Trang chủ hiển thị tổng quan hệ thống:
 
-### Quy trinh IQC
+- **Tổng phiếu kiểm tra:** Tổng số phiếu IQC + IPQC + OQC
+- **Đạt / Không đạt / Tỷ lệ đạt:** Thống kê chất lượng
+- **NCR đang mở:** Số sự không phù hợp chưa xử lý
+- **NCR/CAPA quá hạn:** Cảnh báo các việc trễ hạn
 
-```
-Buoc 1: Tao Nha cung cap → Buoc 2: Tao Nguyen lieu → Buoc 3: Tao Phieu kiem tra → Buoc 4: Nhap ket qua → Buoc 5: Ket luan Dat/Khong dat
-```
+Nhấn vào các **card module** để vào trang tương ứng.
 
-### 4.1. Quan ly Nha cung cap (Tab NCC)
-
-- Xem danh sach nha cung cap
-- **Them NCC:** Nhap Ma NCC, Ten, Nguoi lien he, SDT, Email, Dia chi
-- **Sua:** Nhan nut but chi → Sua thong tin → Luu
-- **Xoa:** Nhan nut thung rac → Xac nhan
-
-### 4.2. Quan ly Nguyen vat lieu (Tab Nguyen lieu)
-
-- Xem danh sach nguyen lieu kem NCC
-- **Them NL:** Nhap Ma NL, Ten, Dac tinh ky thuat, Don vi, Chon NCC
-- **Import Excel:** Nhan nut Import Excel → Chon file `.xlsx`
-  - File Excel can co cac cot: Ma, Ten, Dac tinh, Don vi, Supplier_ID
-
-### 4.3. Tao phieu kiem tra IQC
-
-1. Chon tab **Phieu kiem tra**
-2. Nhan **Tao phieu kiem tra**
-3. Nhap thong tin:
-   - **So phieu:** VD: `IQC-2026-001`
-   - **Nguyen lieu:** Chon tu danh sach
-   - **Nha cung cap:** Chon tu danh sach
-   - **So lo:** So lo cua nha cung cap
-   - **So luong / Co mau:** Tong so luong lo hang va so luong lay mau
-   - **Ngay kiem:** Ngay thuc hien kiem tra
-   - **Nguoi kiem:** Chon nguoi kiem tra (dropdown)
-4. Co the su dung **Bang AQL** de tinh co mau tu dong:
-   - Chon muc kiem tra (G-I/G-II/G-III/S-1 den S-4)
-   - Nhap kich thuoc lo → He thong tinh co mau tu dong
-
-### 4.4. Nhap ket qua kiem tra
-
-1. Nhan **Chi tiet** tren phieu can nhap
-2. Nhan **Them ket qua**
-3. Nhap tung muc kiem:
-   - **Muc kiem:** Ten chi tieu (VD: Do day, Do rong, Do cung...)
-   - **Tieu chuan:** Tieu chuan can dat
-   - **Gia tri do:** Ket qua do thuc te
-   - **Gioi han duoi / Gioi han tren:** Dung sai cho phep
-   - **Ket qua:** Dat / Khong dat (tu dong neu nam trong dung sai)
-4. Nhan **Them ket qua**
-
-### 4.5. Ket luan phieu
-
-Sau khi nhap du ket qua:
-- Nhan **Dat** → Phieu chuyen trang thai Dat (Pass)
-- Nhan **Khong dat** → Phieu chuyen trang thai Khong dat (Fail) → Co the tao NCR
+Cảnh báo màu vàng xuất hiện khi có NCR hoặc CAPA quá hạn.
 
 ---
 
-## 5. IPQC - KIEM TRA QUA TRINH
+## 4. IQC - KIỂM TRA ĐẦU VÀO
 
-Kiem tra chat luong **trong qua trinh san xuat** tai cac cong doan.
+Kiểm tra chất lượng **nguyên vật liệu** khi nhập về từ nhà cung cấp.
 
-### Quy trinh IPQC
+### Quy trình IQC
 
 ```
-Buoc 1: Tao phieu IPQC → Buoc 2: Nhap ket qua do → Buoc 3: Ket luan Dat/Khong dat
+Bước 1: Tạo Nhà cung cấp → Bước 2: Tạo Nguyên liệu → Bước 3: Tạo Phiếu kiểm tra → Bước 4: Nhập kết quả → Bước 5: Kết luận Đạt/Không đạt
 ```
 
-### Tao phieu IPQC
+### 4.1. Quản lý Nhà cung cấp (Tab NCC)
 
-1. Nhan **Tao phieu kiem tra**
-2. Nhap thong tin:
-   - **So phieu:** VD: `IPQC-2026-001`
-   - **Cong doan:** Ten cong doan (VD: Han khung, Son tinh dien, Tien CNC...)
-   - **Tram lam viec:** Vi tri tram (VD: Tram han 1, Line A...)
-   - **May:** Ten may (VD: May han MIG-03, May tien CNC-01...)
-   - **Ca:** Ca 1, Ca 2, hoac Ca 3
-   - **Co mau:** So mau lay de kiem tra (thuong 5 san pham)
-   - **Ngay kiem / Nguoi kiem**
-3. Nhan **Tao phieu**
+- Xem danh sách nhà cung cấp
+- **Thêm NCC:** Nhập Mã NCC, Tên, Người liên hệ, SĐT, Email, Địa chỉ
+- **Sửa:** Nhấn nút bút chì → Sửa thông tin → Lưu
+- **Xóa:** Nhấn nút thùng rác → Xác nhận
 
-### Nhap ket qua IPQC
+### 4.2. Quản lý Nguyên vật liệu (Tab Nguyên liệu)
 
-Tuong tu IQC: Nhan **Chi tiet** → **Them ket qua** → Nhap gia tri do → Ket luan
+- Xem danh sách nguyên liệu kèm NCC
+- **Thêm NL:** Nhập Mã NL, Tên, Đặc tính kỹ thuật, Đơn vị, Chọn NCC
+- **Import Excel:** Nhấn nút Import Excel → Chọn file `.xlsx`
+  - File Excel cần có các cột: Mã, Tên, Đặc tính, Đơn vị, Supplier_ID
+
+### 4.3. Tạo phiếu kiểm tra IQC
+
+1. Chọn tab **Phiếu kiểm tra**
+2. Nhấn **Tạo phiếu kiểm tra**
+3. Nhập thông tin:
+   - **Số phiếu:** VD: `IQC-2026-001`
+   - **Nguyên liệu:** Chọn từ danh sách
+   - **Nhà cung cấp:** Chọn từ danh sách
+   - **Số lô:** Số lô của nhà cung cấp
+   - **Số lượng / Cỡ mẫu:** Tổng số lượng lô hàng và số lượng lấy mẫu
+   - **Ngày kiểm:** Ngày thực hiện kiểm tra
+   - **Người kiểm:** Chọn người kiểm tra (dropdown)
+4. Có thể sử dụng **Bảng AQL** để tính cỡ mẫu tự động:
+   - Chọn mức kiểm tra (G-I/G-II/G-III/S-1 đến S-4)
+   - Nhập kích thước lô → Hệ thống tính cỡ mẫu tự động
+
+### 4.4. Nhập kết quả kiểm tra
+
+1. Nhấn **Chi tiết** trên phiếu cần nhập
+2. Nhấn **Thêm kết quả**
+3. Nhập từng mục kiểm:
+   - **Mục kiểm:** Tên chỉ tiêu (VD: Độ dày, Độ rộng, Độ cứng...)
+   - **Tiêu chuẩn:** Tiêu chuẩn cần đạt
+   - **Giá trị đo:** Kết quả đo thực tế
+   - **Giới hạn dưới / Giới hạn trên:** Dung sai cho phép
+   - **Kết quả:** Đạt / Không đạt (tự động nếu nằm trong dung sai)
+4. Nhấn **Thêm kết quả**
+
+### 4.5. Kết luận phiếu
+
+Sau khi nhập đủ kết quả:
+- Nhấn **Đạt** → Phiếu chuyển trạng thái Đạt (Pass)
+- Nhấn **Không đạt** → Phiếu chuyển trạng thái Không đạt (Fail) → Có thể tạo NCR
 
 ---
 
-## 6. OQC - KIEM TRA THANH PHAM
+## 5. IPQC - KIỂM TRA QUÁ TRÌNH
 
-Kiem tra chat luong **san pham cuoi cung** truoc khi xuat hang.
+Kiểm tra chất lượng **trong quá trình sản xuất** tại các công đoạn.
 
-### Quy trinh OQC
+### Quy trình IPQC
 
 ```
-Buoc 1: Tao San pham → Buoc 2: Tao phieu OQC → Buoc 3: Nhap ket qua → Buoc 4: Ket luan
+Bước 1: Tạo phiếu IPQC → Bước 2: Nhập kết quả đo → Bước 3: Kết luận Đạt/Không đạt
 ```
 
-### 6.1. Quan ly San pham (Tab San pham)
+### Tạo phiếu IPQC
 
-- Xem danh sach san pham
-- **Them SP:** Ma SP, Ten SP, Dac tinh, Don vi
-- **Import Excel:** Nhan Import Excel → Chon file `.xlsx`
-  - File Excel can co cac cot: Ma, Ten, Dac tinh, Don vi
+1. Nhấn **Tạo phiếu kiểm tra**
+2. Nhập thông tin:
+   - **Số phiếu:** VD: `IPQC-2026-001`
+   - **Công đoạn:** Tên công đoạn (VD: Hàn khung, Sơn tĩnh điện, Tiện CNC...)
+   - **Trạm làm việc:** Vị trí trạm (VD: Trạm hàn 1, Line A...)
+   - **Máy:** Tên máy (VD: Máy hàn MIG-03, Máy tiện CNC-01...)
+   - **Ca:** Ca 1, Ca 2, hoặc Ca 3
+   - **Cỡ mẫu:** Số mẫu lấy để kiểm tra (thường 5 sản phẩm)
+   - **Ngày kiểm / Người kiểm**
+3. Nhấn **Tạo phiếu**
 
-### 6.2. Tao phieu OQC
+### Nhập kết quả IPQC
 
-1. Chon tab **Phieu kiem tra**
-2. Nhan **Tao phieu kiem tra**
-3. Nhap: So phieu, San pham, So lo, So luong, Co mau, Ngay kiem, Nguoi kiem
-4. Nhap ket qua va ket luan Dat/Khong dat
+Tương tự IQC: Nhấn **Chi tiết** → **Thêm kết quả** → Nhập giá trị đo → Kết luận
 
 ---
 
-## 7. NCR + CAPA - XU LY SU KHONG PHU HOP
+## 6. OQC - KIỂM TRA THÀNH PHẨM
 
-Quy trinh xu ly khi phat hien loi / khong phu hop.
+Kiểm tra chất lượng **sản phẩm cuối cùng** trước khi xuất hàng.
 
-### Luong xu ly
+### Quy trình OQC
 
 ```
-Phat hien loi → Tao NCR → Dieu tra → Tao CAPA → Thuc hien → Hoan thanh → Xac nhan → Dong NCR
-   (Mo)        (Dang dieu tra)          (Dang thuc hien)  (Hoan thanh)  (Da xac nhan)  (Dong)
+Bước 1: Tạo Sản phẩm → Bước 2: Tạo phiếu OQC → Bước 3: Nhập kết quả → Bước 4: Kết luận
 ```
 
-### 7.1. Tao NCR (Bao cao su khong phu hop)
+### 6.1. Quản lý Sản phẩm (Tab Sản phẩm)
 
-1. Chon tab **NCR**
-2. Nhan **Tao NCR moi**
-3. Nhap thong tin:
-   - **So NCR:** VD: `NCR-2026-001`
-   - **Tieu de:** Mo ta ngan gon van de
-   - **Mo ta chi tiet:** Mo ta day du ve loi
-   - **Muc do:**
-     - *Nghiem trong (Critical):* Anh huong an toan hoac chuc nang san pham
-     - *Lon (Major):* Anh huong dang ke den chat luong
-     - *Nho (Minor):* Sai lech nho, khong anh huong chuc nang
-   - **Nguon phat hien:** IQC, IPQC, OQC, hoac Khac
-   - **Nguoi bao cao / Nguoi xu ly**
-   - **Han xu ly:** Ngay can hoan thanh
+- Xem danh sách sản phẩm
+- **Thêm SP:** Mã SP, Tên SP, Đặc tính, Đơn vị
+- **Import Excel:** Nhấn Import Excel → Chọn file `.xlsx`
+  - File Excel cần có các cột: Mã, Tên, Đặc tính, Đơn vị
 
-### 7.2. Xu ly NCR
+### 6.2. Tạo phiếu OQC
 
-Chuyen trang thai NCR qua cac buoc:
-- **Dieu tra:** Dang tim nguyen nhan
-- **Da xu ly:** Da co giai phap
-- **Dong:** Da hoan tat
-
-### 7.3. Tao CAPA (Hanh dong khac phuc/phong ngua)
-
-Trong chi tiet NCR, nhan **Them CAPA**:
-- **So CAPA:** VD: `CAPA-2026-001`
-- **Tieu de:** Ten hanh dong
-- **Loai:**
-  - *Khac phuc (Corrective):* Sua loi da xay ra
-  - *Phong ngua (Preventive):* Ngan loi xay ra trong tuong lai
-- **Nguyen nhan goc:** Phan tich 5 Why, bieaudo xuong ca...
-- **Ke hoach hanh dong:** Cac buoc cu the
-- **Nguoi phu trach / Han hoan thanh**
-
-### 7.4. Theo doi CAPA
-
-Chuyen trang thai CAPA:
-- **Dang thuc hien** → **Hoan thanh** → **Da xac nhan**
-
-### 7.5. Xem tong hop CAPA
-
-Tab **CAPA** hien thi danh sach tat ca CAPA, co the loc theo trang thai.
+1. Chọn tab **Phiếu kiểm tra**
+2. Nhấn **Tạo phiếu kiểm tra**
+3. Nhập: Số phiếu, Sản phẩm, Số lô, Số lượng, Cỡ mẫu, Ngày kiểm, Người kiểm
+4. Nhập kết quả và kết luận Đạt/Không đạt
 
 ---
 
-## 8. CHECKLIST MAU - TU DONG DIEN MUC KIEM
+## 7. NCR + CAPA - XỬ LÝ SỰ KHÔNG PHÙ HỢP
 
-Tinh nang giup tao **mau checklist** co san, khi tao phieu kiem tra chi can chon checklist → he thong tu dong dien tat ca muc kiem.
+Quy trình xử lý khi phát hiện lỗi / không phù hợp.
 
-### 8.1. Tao checklist moi (thu cong)
+### Luồng xử lý
 
-1. Vao menu **Checklist mau** (ben trai)
-2. Nhan **Tao checklist moi**
-3. Nhap:
-   - **Ma checklist:** VD: `IQC-THEP`
-   - **Ten checklist:** VD: `Kiem tra thep tam 2mm`
-   - **Module:** IQC, OQC, hoac IPQC
-4. Them tung muc kiem:
-   - **Muc kiem:** Ten chi tieu (Do day, Do rong...)
-   - **Tieu chuan:** Mo ta tieu chuan
-   - **Min / Max:** Gioi han dung sai
-5. Nhan dau `+` de them nhieu muc → Nhan **Tao moi**
+```
+Phát hiện lỗi → Tạo NCR → Điều tra → Tạo CAPA → Thực hiện → Hoàn thành → Xác nhận → Đóng NCR
+   (Mở)        (Đang điều tra)          (Đang thực hiện)  (Hoàn thành)  (Đã xác nhận)  (Đóng)
+```
 
-### 8.2. Import checklist tu file Excel (.xlsx)
+### 7.1. Tạo NCR (Báo cáo sự không phù hợp)
 
-1. Chuan bi file Excel, moi **sheet** = 1 checklist. Ten sheet = Ma checklist
-2. Cot: Muc kiem | Tieu chuan | Min | Max
+1. Chọn tab **NCR**
+2. Nhấn **Tạo NCR mới**
+3. Nhập thông tin:
+   - **Số NCR:** VD: `NCR-2026-001`
+   - **Tiêu đề:** Mô tả ngắn gọn vấn đề
+   - **Mô tả chi tiết:** Mô tả đầy đủ về lỗi
+   - **Mức độ:**
+     - *Nghiêm trọng (Critical):* Ảnh hưởng an toàn hoặc chức năng sản phẩm
+     - *Lớn (Major):* Ảnh hưởng đáng kể đến chất lượng
+     - *Nhỏ (Minor):* Sai lệch nhỏ, không ảnh hưởng chức năng
+   - **Nguồn phát hiện:** IQC, IPQC, OQC, hoặc Khác
+   - **Người báo cáo / Người xử lý**
+   - **Hạn xử lý:** Ngày cần hoàn thành
 
-Vi du:
+### 7.2. Xử lý NCR
+
+Chuyển trạng thái NCR qua các bước:
+- **Điều tra:** Đang tìm nguyên nhân
+- **Đã xử lý:** Đã có giải pháp
+- **Đóng:** Đã hoàn tất
+
+### 7.3. Tạo CAPA (Hành động khắc phục/phòng ngừa)
+
+Trong chi tiết NCR, nhấn **Thêm CAPA**:
+- **Số CAPA:** VD: `CAPA-2026-001`
+- **Tiêu đề:** Tên hành động
+- **Loại:**
+  - *Khắc phục (Corrective):* Sửa lỗi đã xảy ra
+  - *Phòng ngừa (Preventive):* Ngăn lỗi xảy ra trong tương lai
+- **Nguyên nhân gốc:** Phân tích 5 Why, biểu đồ xương cá...
+- **Kế hoạch hành động:** Các bước cụ thể
+- **Người phụ trách / Hạn hoàn thành**
+
+### 7.4. Theo dõi CAPA
+
+Chuyển trạng thái CAPA:
+- **Đang thực hiện** → **Hoàn thành** → **Đã xác nhận**
+
+### 7.5. Xem tổng hợp CAPA
+
+Tab **CAPA** hiển thị danh sách tất cả CAPA, có thể lọc theo trạng thái.
+
+---
+
+## 8. CHECKLIST MẪU - TỰ ĐỘNG ĐIỀN MỤC KIỂM
+
+Tính năng giúp tạo **mẫu checklist** có sẵn, khi tạo phiếu kiểm tra chỉ cần chọn checklist → hệ thống tự động điền tất cả mục kiểm.
+
+### 8.1. Tạo checklist mới (thủ công)
+
+1. Vào menu **Checklist mẫu** (bên trái)
+2. Nhấn **Tạo checklist mới**
+3. Nhập:
+   - **Mã checklist:** VD: `IQC-THEP`
+   - **Tên checklist:** VD: `Kiểm tra thép tấm 2mm`
+   - **Module:** IQC, OQC, hoặc IPQC
+4. Thêm từng mục kiểm:
+   - **Mục kiểm:** Tên chỉ tiêu (Độ dày, Độ rộng...)
+   - **Tiêu chuẩn:** Mô tả tiêu chuẩn
+   - **Min / Max:** Giới hạn dung sai
+5. Nhấn dấu `+` để thêm nhiều mục → Nhấn **Tạo mới**
+
+### 8.2. Import checklist từ file Excel (.xlsx)
+
+1. Chuẩn bị file Excel, mỗi **sheet** = 1 checklist. Tên sheet = Mã checklist
+2. Cột: Mục kiểm | Tiêu chuẩn | Min | Max
+
+Ví dụ:
 ```
 Sheet: "IQC-THEP-2MM"
-| Muc kiem     | Tieu chuan    | Min  | Max  |
-| Do day       | 2.0mm +/-0.1  | 1.9  | 2.1  |
-| Do rong      | 1200mm +/-2   | 1198 | 1202 |
+| Mục kiểm     | Tiêu chuẩn    | Min  | Max  |
+| Độ dày       | 2.0mm +/-0.1  | 1.9  | 2.1  |
+| Độ rộng      | 1200mm +/-2   | 1198 | 1202 |
 ```
 
-3. Vao **Checklist mau** → Chon module → Nhan **Import Excel** → Chon file
+3. Vào **Checklist mẫu** → Chọn module → Nhấn **Import Excel** → Chọn file
 
-### 8.3. Import checklist tu file Word (.docx)
+### 8.3. Import checklist từ file Word (.docx)
 
-1. Chuan bi file Word, moi **bang (table)** = 1 checklist
-2. Cot: Muc kiem | Tieu chuan | Min | Max
-3. Dong tieu de tu dong bo qua
-4. Vao **Checklist mau** → Nhan **Import Excel** → Chon file `.docx`
+1. Chuẩn bị file Word, mỗi **bảng (table)** = 1 checklist
+2. Cột: Mục kiểm | Tiêu chuẩn | Min | Max
+3. Dòng tiêu đề tự động bỏ qua
+4. Vào **Checklist mẫu** → Nhấn **Import Excel** → Chọn file `.docx`
 
-### 8.4. Su dung checklist khi tao phieu
+### 8.4. Sử dụng checklist khi tạo phiếu
 
-1. Vao IQC/OQC/IPQC → **Tao phieu kiem tra**
-2. Dien thong tin phieu → Chon **Checklist mau** tu dropdown
-3. Nhan **Tao phieu** → He thong tu dong tao san cac muc kiem
-4. Chi can nhap **gia tri do thuc te** cho tung muc
-
----
-
-## 9. SPC - BAO CAO THONG KE
-
-### 8.1. Tong quan
-
-Trang SPC hien thi:
-- **Bang tong hop:** Tong so phieu IQC, IPQC, OQC
-- **Ty le dat** cho tung module
-
-### 8.2. Bieu do kiem soat (X-bar Chart)
-
-- Hien thi gia tri trung binh cho tung muc kiem
-- So sanh voi gioi han duoi (LCL) va gioi han tren (UCL)
-
-### 8.3. Bieu do Histogram
-
-- Hien thi phan bo tan suat cac gia tri do
-- Nhan biet phan bo co trong dung sai hay khong
-
-### 8.4. Bieu do Pareto
-
-- Xem cac loi thuong gap nhat
-- Chon module (IQC/OQC/IPQC)
-- Hien thi thu tu loi tu nhieu → it
-
-### 8.5. Xu huong theo thoi gian
-
-- Xem xu huong gia tri do theo thoi gian
-- Duong LCL/UCL de phat hien diem bat thuong
+1. Vào IQC/OQC/IPQC → **Tạo phiếu kiểm tra**
+2. Điền thông tin phiếu → Chọn **Checklist mẫu** từ dropdown
+3. Nhấn **Tạo phiếu** → Hệ thống tự động tạo sẵn các mục kiểm
+4. Chỉ cần nhập **giá trị đo thực tế** cho từng mục
 
 ---
 
-## 10. THIET BI DO & HIEU CHUAN
+## 9. SPC - BÁO CÁO THỐNG KÊ
 
-### 9.1. Them thiet bi do
+### 9.1. Tổng quan
 
-1. Vao trang **Thiet bi do**
-2. Nhan **Them thiet bi**
-3. Nhap thong tin:
-   - **Ma thiet bi:** VD: `TB-001`
-   - **Ten thiet bi:** VD: `Thuoc cap dien tu Mitutoyo 0-150mm`
-   - **Loai:** Do luong, Thu nghiem, Dung cu kiem, Khac
-   - **So serie:** So serie cua nha san xuat
-   - **Vi tri:** Vi tri dat thiet bi
-   - **Chu ky hieu chuan:** So ngay giua 2 lan hieu chuan (thuong 365 ngay)
-   - **Ngay hieu chuan gan nhat**
+Trang SPC hiển thị:
+- **Bảng tổng hợp:** Tổng số phiếu IQC, IPQC, OQC
+- **Tỷ lệ đạt** cho từng module
 
-### 9.2. Theo doi hieu chuan
+### 9.2. Biểu đồ kiểm soát (X-bar Chart)
 
-Bang thiet bi hien thi:
-- **Den xanh:** Con han hieu chuan
-- **Den cam:** Sap den han (<= 30 ngay)
-- **Den do:** DA QUA HAN hieu chuan
-- So ngay con lai / so ngay qua han
+- Hiển thị giá trị trung bình cho từng mục kiểm
+- So sánh với giới hạn dưới (LCL) và giới hạn trên (UCL)
 
-### 9.3. Hieu chuan thiet bi
+### 9.3. Biểu đồ Histogram
 
-1. Nhan nut **Hieu chuan**
-2. Chon ngay hieu chuan
-3. Nhan **Xac nhan** → He thong tu dong tinh han hieu chuan tiep theo
+- Hiển thị phân bố tần suất các giá trị đo
+- Nhận biết phân bố có trong dung sai hay không
+
+### 9.4. Biểu đồ Pareto
+
+- Xem các lỗi thường gặp nhất
+- Chọn module (IQC/OQC/IPQC)
+- Hiển thị thứ tự lỗi từ nhiều → ít
+
+### 9.5. Xu hướng theo thời gian
+
+- Xem xu hướng giá trị đo theo thời gian
+- Đường LCL/UCL để phát hiện điểm bất thường
 
 ---
 
-## 11. QUAN LY NGUOI DUNG
+## 10. THIẾT BỊ ĐO & HIỆU CHUẨN
 
-*(Danh cho tien)*
+### 10.1. Thêm thiết bị đo
 
-### 10.1. Xem danh sach nguoi dung
+1. Vào trang **Thiết bị đo**
+2. Nhấn **Thêm thiết bị**
+3. Nhập thông tin:
+   - **Mã thiết bị:** VD: `TB-001`
+   - **Tên thiết bị:** VD: `Thước cặp điện tử Mitutoyo 0-150mm`
+   - **Loại:** Đo lường, Thử nghiệm, Dụng cụ kiểm, Khác
+   - **Số serie:** Số serie của nhà sản xuất
+   - **Vị trí:** Vị trí đặt thiết bị
+   - **Chu kỳ hiệu chuẩn:** Số ngày giữa 2 lần hiệu chuẩn (thường 365 ngày)
+   - **Ngày hiệu chuẩn gần nhất**
 
-Vao trang **Nguoi dung** → Xem tat ca tai khoan
+### 10.2. Theo dõi hiệu chuẩn
 
-### 10.2. Them nguoi dung moi
+Bảng thiết bị hiển thị:
+- **Đèn xanh:** Còn hạn hiệu chuẩn
+- **Đèn cam:** Sắp đến hạn (<= 30 ngày)
+- **Đèn đỏ:** ĐÃ QUÁ HẠN hiệu chuẩn
+- Số ngày còn lại / số ngày quá hạn
 
-1. Nhan **Them nguoi dung**
-2. Nhap: Ten dang nhap, Email, Ho ten, Mat khau, Vai tro
-3. Nhan **Tao nguoi dung**
+### 10.3. Hiệu chuẩn thiết bị
 
-### 10.3. Sua nguoi dung
+1. Nhấn nút **Hiệu chuẩn**
+2. Chọn ngày hiệu chuẩn
+3. Nhấn **Xác nhận** → Hệ thống tự động tính hạn hiệu chuẩn tiếp theo
 
-1. Nhan nut but chi tren nguoi dung can sua
-2. Co the doi: **Vai tro** va **Trang thai hoat dong**
-3. Nhan **Cap nhat**
+---
 
-### 10.4. Xoa / Vo hieu nguoi dung
+## 11. QUẢN LÝ NGƯỜI DÙNG
 
-- **Xoa:** Nhan thung rac → Xac nhan (xoa vinh vien)
-- **Vo hieu:** Sua → Tat Switch "Hoat dong" → Nguoi dung khong the dang nhap
+*(Dành cho admin)*
 
-### Cac vai tro
+### 11.1. Xem danh sách người dùng
 
-| Vai tro | Quyen han |
+Vào trang **Người dùng** → Xem tất cả tài khoản
+
+### 11.2. Thêm người dùng mới
+
+1. Nhấn **Thêm người dùng**
+2. Nhập: Tên đăng nhập, Email, Họ tên, Mật khẩu, Vai trò
+3. Nhấn **Tạo người dùng**
+
+### 11.3. Sửa người dùng
+
+1. Nhấn nút bút chì trên người dùng cần sửa
+2. Có thể đổi: **Vai trò** và **Trạng thái hoạt động**
+3. Nhấn **Cập nhật**
+
+### 11.4. Xóa / Vô hiệu người dùng
+
+- **Xóa:** Nhấn thùng rác → Xác nhận (xóa vĩnh viễn)
+- **Vô hiệu:** Sửa → Tắt Switch "Hoạt động" → Người dùng không thể đăng nhập
+
+### Các vai trò
+
+| Vai trò | Quyền hạn |
 |---------|-----------|
-| Quan ly (admin) | Toan quyen: xem, tao, sua, xoa tat ca. Quan ly nguoi dung |
-| Truong QC (qc_manager) | Xem + Tao phieu, NCR, CAPA, bao cao. Khong quan ly nguoi dung |
-| Kiem tra vien (inspector) | Tao phieu kiem tra, nhap ket qua. Xem du lieu |
-| Cong nhan (operator) | Chi xem duoc ban than, khong tao/sua duoc |
+| Quản lý (admin) | Toàn quyền: xem, tạo, sửa, xóa tất cả. Quản lý người dùng |
+| Trưởng QC (qc_manager) | Xem + Tạo phiếu, NCR, CAPA, báo cáo. Không quản lý người dùng |
+| Kiểm tra viên (inspector) | Tạo phiếu kiểm tra, nhập kết quả. Xem dữ liệu |
+| Công nhân (operator) | Chỉ xem được bản thân, không tạo/sửa được |
 
 ---
 
-## 12. NHAT KY HOAT DONG
+## 12. NHẬT KÝ HOẠT ĐỘNG
 
-Trang **Nhat ky** ghi lai moi thao tac trong he thong:
+Trang **Nhật ký** ghi lại mọi thao tác trong hệ thống:
 
-- **Thoi gian:** Khi nao
-- **Nguoi dung:** Ai thuc hien
-- **Hanh dong:** Tao / Sua / Xoa / Hieu chuan / Dang nhap
-- **Module:** IQC, OQC, IPQC, NCR, CAPA, Thiet bi...
-- **Mo ta:** Chi tiet hanh dong
+- **Thời gian:** Khi nào
+- **Người dùng:** Ai thực hiện
+- **Hành động:** Tạo / Sửa / Xóa / Hiệu chuẩn / Đăng nhập
+- **Module:** IQC, OQC, IPQC, NCR, CAPA, Thiết bị...
+- **Mô tả:** Chi tiết hành động
 
-Co the **loc theo module** de xem nhat ky cua tung phan he.
-
----
-
-## 13. XUAT BAO CAO EXCEL
-
-### Xuat danh sach phieu kiem tra
-
-1. Vao trang IQC, IPQC, hoac OQC
-2. Nhan nut **Xuat Excel**
-3. File Excel duoc tai ve voi cac cot:
-   - So phieu, Trang thai, Ngay kiem, Nguoi kiem, Ghi chu
-
-### Import du lieu tu Excel
-
-**Nguyen lieu:**
-1. Vao IQC → Tab Nguyen lieu → Nhan **Import Excel**
-2. Chon file `.xlsx` dinh dang:
-   - Cot A: Ma NL, Cot B: Ten NL, Cot C: Dac tinh, Cot D: Don vi, Cot E: Supplier_ID
-
-**San pham:**
-1. Vao OQC → Tab San pham → Nhan **Import Excel**
-2. Chon file `.xlsx` dinh dang:
-   - Cot A: Ma SP, Cot B: Ten SP, Cot C: Dac tinh, Cot D: Don vi
+Có thể **lọc theo module** để xem nhật ký của từng phân hệ.
 
 ---
 
-## 14. DOI MAT KHAU
+## 13. XUẤT BÁO CÁO EXCEL
 
-1. Nhan vao **ten nguoi dung** o goc phai man hinh
-2. Chon **Doi mat khau**
-3. Nhap: Mat khau cu + Mat khau moi (toi thieu 6 ky tu)
-4. Nhan **Doi mat khau**
+### Xuất danh sách phiếu kiểm tra
+
+1. Vào trang IQC, IPQC, hoặc OQC
+2. Nhấn nút **Xuất Excel**
+3. File Excel được tải về với các cột:
+   - Số phiếu, Trạng thái, Ngày kiểm, Người kiểm, Ghi chú
+
+### Import dữ liệu từ Excel
+
+**Nguyên liệu:**
+1. Vào IQC → Tab Nguyên liệu → Nhấn **Import Excel**
+2. Chọn file `.xlsx` định dạng:
+   - Cột A: Mã NL, Cột B: Tên NL, Cột C: Đặc tính, Cột D: Đơn vị, Cột E: Supplier_ID
+
+**Sản phẩm:**
+1. Vào OQC → Tab Sản phẩm → Nhấn **Import Excel**
+2. Chọn file `.xlsx` định dạng:
+   - Cột A: Mã SP, Cột B: Tên SP, Cột C: Đặc tính, Cột D: Đơn vị
 
 ---
 
-## 15. CAI DAT PWA (APP DIEN THOAI)
+## 14. ĐỔI MẬT KHẨU
 
-Cai app Quality MES nhu app native tren dien thoai, co icon ngoai man hinh, khong hien thanh dia chi trinh duyet.
+1. Nhấn vào **tên người dùng** ở góc phải màn hình
+2. Chọn **Đổi mật khẩu**
+3. Nhập: Mật khẩu cũ + Mật khẩu mới (tối thiểu 6 ký tự)
+4. Nhấn **Đổi mật khẩu**
+
+---
+
+## 15. CÀI ĐẶT PWA (APP ĐIỆN THOẠI)
+
+Cài app Quality MES như app native trên điện thoại, có icon ngoài màn hình, không hiện thanh địa chỉ trình duyệt.
 
 ### Android (Chrome)
 
-1. Mo Chrome, vao link app (VD: `https://quality-mes-9.onrender.com`)
-2. Dang nhap → Bam **3 cham** goc phai tren
-3. Chon **Them vao man hinh chinh**
-4. Dat ten → **Them**
+1. Mở Chrome, vào link app (VD: `https://quality-mes-9.onrender.com`)
+2. Đăng nhập → Bấm **3 chấm** góc phải trên
+3. Chọn **Thêm vào màn hình chính**
+4. Đặt tên → **Thêm**
 
 ### iOS / iPhone / iPad (Safari)
 
-1. Mo Safari, vao link app
-2. Bam nut **Chia se** (hinh vuong mui ten giua thanh duoi)
-3. Chon **Them vao man hinh chinh**
-4. Dat ten → **Them**
+1. Mở Safari, vào link app
+2. Bấm nút **Chia sẻ** (hình vuông mũi tên giữa thanh dưới)
+3. Chọn **Thêm vào màn hình chính**
+4. Đặt tên → **Thêm**
 
-### Sau khi cai
+### Sau khi cài
 
-- Mo app tu icon ngoai man hinh
-- Giao dien toan man hinh, khong co thanh dia chi trinh duyet
-- Dung nhu app binh thuong
-- Tu dong cap nhat khi co phien ban moi
+- Mở app từ icon ngoài màn hình
+- Giao diện toàn màn hình, không có thanh địa chỉ trình duyệt
+- Dùng như app bình thường
+- Tự động cập nhật khi có phiên bản mới
 
 ---
 
 ## 16. DEPLOY ONLINE 24/7 (RENDER)
 
-Deploy app len Render de truy cap online mien phi 24/7.
+Deploy app lên Render để truy cập online miễn phí 24/7.
 
-### Buoc 1: Push code len GitHub
+### Bước 1: Push code lên GitHub
 
 ```powershell
 cd C:\Users\BOD-Hung\Documents\Opencode
 git push
 ```
 
-### Buoc 2: Tao Web Service tren Render
+### Bước 2: Tạo Web Service trên Render
 
-1. Vao https://dashboard.render.com → Dang nhap GitHub
-2. **New +** → **Web Service** → Chon repo `Hungton60/quality-mes`
-3. Dien:
+1. Vào https://dashboard.render.com → Đăng nhập GitHub
+2. **New +** → **Web Service** → Chọn repo `Hungton60/quality-mes`
+3. Điền:
 
-| O | Gia tri |
+| Ô | Giá trị |
 |---|---------|
 | Root Directory | `quality-mes` |
 | Build Command | `bash build.sh` |
 | Start Command | `bash start.sh` |
 
 4. Instance Type: **Free**
-5. Nhan **Create Web Service** → Doi 5-7 phut build
+5. Nhấn **Create Web Service** → Đợi 5-7 phút build
 
-Khi thay `Your service is live 🎉` → Copy link chia se cho team.
+Khi thấy `Your service is live 🎉` → Copy link chia sẻ cho team.
 
-### Luu y
+### Lưu ý
 
-- Mien phi 750 gio/thang (du dung 24/7)
-- Cold start 30-60 giay lan dau truy cap
-- App ngu sau 15 phut khong dung → mo lai doi vai giay
-- Du lieu SQLite reset khi deploy code moi
+- Miễn phí 750 giờ/tháng (đủ dùng 24/7)
+- Cold start 30-60 giây lần đầu truy cập
+- App ngủ sau 15 phút không dùng → mở lại đợi vài giây
+- Dữ liệu SQLite reset khi deploy code mới
 
 ---
 
-## 17. TICH HOP API
+## 17. TÍCH HỢP API
 
-Quality MES cung cap **REST API** de tich hop voi cac he thong khac (ERP, MES, SCADA, BI...).
+Quality MES cung cấp **REST API** để tích hợp với các hệ thống khác (ERP, MES, SCADA, BI...).
 
-### 17.1. Truy cap tai lieu API
+### 17.1. Truy cập tài liệu API
 
-Mo trinh duyet: `http://192.168.1.5:8000/api/docs`
+Mở trình duyệt: `http://địa-chỉ-máy:8000/api/docs`
 
-Giao dien Swagger UI cho phep test truc tiep moi API.
+Giao diện Swagger UI cho phép test trực tiếp mọi API.
 
-### 17.2. Xac thuc API
+### 17.2. Xác thực API
 
-Tat ca API (tru dang nhap/dang ky) can gui kem JWT token trong header:
+Tất cả API (trừ đăng nhập/đăng ký) cần gửi kèm JWT token trong header:
 
 ```
 Authorization: Bearer <token>
 ```
 
-**Lay token:**
+**Lấy token:**
 ```
 POST /api/auth/login
 Body: {"username": "admin", "password": "Admin123"}
 Response: {"access_token": "eyJ...", "token_type": "bearer", "user": {...}}
 ```
 
-### 17.3. Vi du tich hop
+### 17.3. Ví dụ tích hợp
 
 **Python:**
 ```python
@@ -576,13 +575,13 @@ import requests
 
 BASE = "http://192.168.1.5:8000"
 
-# Dang nhap
+# Đăng nhập
 r = requests.post(f"{BASE}/api/auth/login",
     json={"username": "admin", "password": "Admin123"})
 token = r.json()["access_token"]
 headers = {"Authorization": f"Bearer {token}"}
 
-# Tao phieu IQC
+# Tạo phiếu IQC
 requests.post(f"{BASE}/api/iqc/inspections", headers=headers, json={
     "inspection_no": "IQC-2026-050",
     "material_id": 1,
@@ -594,94 +593,60 @@ requests.post(f"{BASE}/api/iqc/inspections", headers=headers, json={
     "inspector_id": 1
 })
 
-# Lay thong ke chat luong
+# Lấy thống kê chất lượng
 stats = requests.get(f"{BASE}/api/spc/summary", headers=headers).json()
-print(f"IQC: {stats['iqc']['total']} phieu, Dat: {stats['iqc']['pass']}")
-
-# Kiem tra NCR qua han
-overdue = requests.get(f"{BASE}/api/overdue", headers=headers).json()
-print(f"NCR qua han: {overdue['overdue_ncrs']}")
+print(f"IQC: {stats['iqc']['total']} phiếu, Đạt: {stats['iqc']['pass']}")
 ```
 
-**JavaScript (Node.js):**
-```javascript
-const BASE = "http://192.168.1.5:8000";
+### 17.4. Danh sách API endpoints
 
-// Dang nhap
-const loginRes = await fetch(`${BASE}/api/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: "admin", password: "Admin123" })
-});
-const { access_token } = await loginRes.json();
-
-// Goi API
-const res = await fetch(`${BASE}/api/iqc/inspections`, {
-    headers: { Authorization: `Bearer ${access_token}` }
-});
-const inspections = await res.json();
-```
-
-### 17.4. Danh sach API endpoints
-
-| Method | URL | Mo ta |
+| Method | URL | Mô tả |
 |--------|-----|-------|
-| POST | `/api/auth/login` | Dang nhap, lay token |
-| POST | `/api/auth/register` | Dang ky tai khoan |
-| GET | `/api/auth/me` | Thong tin nguoi dung hien tai |
-| GET | `/api/iqc/suppliers` | Danh sach nha cung cap |
-| POST | `/api/iqc/suppliers` | Them nha cung cap |
-| GET | `/api/iqc/materials` | Danh sach nguyen lieu |
-| POST | `/api/iqc/materials` | Them nguyen lieu |
-| GET | `/api/iqc/inspections` | Danh sach phieu IQC |
-| POST | `/api/iqc/inspections` | Tao phieu IQC |
-| POST | `/api/iqc/inspections/{id}/results` | Them ket qua IQC |
-| PUT | `/api/iqc/inspections/{id}/status` | Cap nhat trang thai IQC |
-| GET | `/api/oqc/products` | Danh sach san pham |
-| POST | `/api/oqc/products` | Them san pham |
-| GET | `/api/oqc/inspections` | Danh sach phieu OQC |
-| POST | `/api/oqc/inspections` | Tao phieu OQC |
-| GET | `/api/ipqc/inspections` | Danh sach phieu IPQC |
-| POST | `/api/ipqc/inspections` | Tao phieu IPQC |
-| GET | `/api/ncr/` | Danh sach NCR |
-| POST | `/api/ncr/` | Tao NCR |
-| GET | `/api/ncr/{id}` | Chi tiet NCR |
-| PUT | `/api/ncr/{id}/status` | Cap nhat trang thai NCR |
-| POST | `/api/ncr/{id}/capas` | Them CAPA cho NCR |
-| GET | `/api/spc/summary` | Thong ke tong quan |
-| GET | `/api/spc/pareto/iqc` | Pareto IQC |
-| GET | `/api/spc/pareto/oqc` | Pareto OQC |
-| GET | `/api/spc/results/{module}` | Du lieu do luong |
-| GET | `/api/overdue` | NCR/CAPA qua han |
-| GET | `/api/equipment/` | Danh sach thiet bi |
-| POST | `/api/equipment/` | Them thiet bi |
-| PUT | `/api/equipment/{id}/calibrate` | Hieu chuan thiet bi |
-| GET | `/api/export/inspections` | Xuat Excel phieu kiem tra |
-| POST | `/api/import/materials` | Import Excel nguyen lieu |
-| POST | `/api/import/products` | Import Excel san pham |
-| GET | `/api/users/` | Danh sach nguoi dung (admin) |
-| POST | `/api/users/` | Them nguoi dung (admin) |
-| PUT | `/api/users/{id}` | Sua nguoi dung (admin) |
-| GET | `/api/users/lookup` | Tim nguoi dung (dropdown) |
-| GET | `/api/activity-logs` | Nhat ky hoat dong |
-| POST | `/api/change-password` | Doi mat khau |
-| GET | `/api/aql-table` | Bang tra AQL |
-| GET | `/api/checklists/` | Danh sach checklist mau |
-| POST | `/api/checklists/` | Tao checklist moi |
-| POST | `/api/checklists/import-excel` | Import checklist tu Excel/Word |
+| POST | `/api/auth/login` | Đăng nhập, lấy token |
+| POST | `/api/auth/register` | Đăng ký tài khoản |
+| GET | `/api/auth/me` | Thông tin người dùng hiện tại |
+| GET | `/api/iqc/suppliers` | Danh sách nhà cung cấp |
+| POST | `/api/iqc/suppliers` | Thêm nhà cung cấp |
+| GET | `/api/iqc/materials` | Danh sách nguyên liệu |
+| POST | `/api/iqc/materials` | Thêm nguyên liệu |
+| GET | `/api/iqc/inspections` | Danh sách phiếu IQC |
+| POST | `/api/iqc/inspections` | Tạo phiếu IQC |
+| POST | `/api/iqc/inspections/{id}/results` | Thêm kết quả IQC |
+| GET | `/api/oqc/products` | Danh sách sản phẩm |
+| POST | `/api/oqc/products` | Thêm sản phẩm |
+| GET | `/api/oqc/inspections` | Danh sách phiếu OQC |
+| POST | `/api/oqc/inspections` | Tạo phiếu OQC |
+| GET | `/api/ipqc/inspections` | Danh sách phiếu IPQC |
+| POST | `/api/ipqc/inspections` | Tạo phiếu IPQC |
+| GET | `/api/ncr/` | Danh sách NCR |
+| POST | `/api/ncr/` | Tạo NCR |
+| PUT | `/api/ncr/{id}/status` | Cập nhật trạng thái NCR |
+| POST | `/api/ncr/{id}/capas` | Thêm CAPA cho NCR |
+| GET | `/api/spc/summary` | Thống kê tổng quan |
+| GET | `/api/overdue` | NCR/CAPA quá hạn |
+| GET | `/api/equipment/` | Danh sách thiết bị |
+| POST | `/api/equipment/` | Thêm thiết bị |
+| PUT | `/api/equipment/{id}/calibrate` | Hiệu chuẩn thiết bị |
+| GET | `/api/export/inspections` | Xuất Excel phiếu kiểm tra |
+| POST | `/api/import/materials` | Import Excel nguyên liệu |
+| POST | `/api/import/products` | Import Excel sản phẩm |
+| GET | `/api/users/` | Danh sách người dùng (admin) |
+| POST | `/api/users/` | Thêm người dùng (admin) |
+| GET | `/api/users/lookup` | Tìm người dùng (dropdown) |
+| GET | `/api/activity-logs` | Nhật ký hoạt động |
+| POST | `/api/change-password` | Đổi mật khẩu |
+| GET | `/api/aql-table` | Bảng tra AQL |
+| GET | `/api/checklists/` | Danh sách checklist mẫu |
+| POST | `/api/checklists/` | Tạo checklist mới |
+| POST | `/api/checklists/import-excel` | Import checklist từ Excel/Word |
 
-### 17.5. Tich hop database truc tiep
+### 17.5. Tích hợp database trực tiếp
 
-Co the ket noi truc tiep den database SQLite de doc du lieu:
+Có thể kết nối trực tiếp đến database SQLite để đọc dữ liệu:
 
 **Power BI / Excel:**
 1. Get Data → ODBC → SQLite
-2. Chon file `quality_mes.db`
-
-**Grafana:**
-1. Cai SQLite datasource plugin
-2. Ket noi den `quality_mes.db`
-3. Tao dashboard tu cac bang: `iqc_inspections`, `oqc_inspections`, `ncrs`, `capas`...
+2. Chọn file `quality_mes.db`
 
 **Python script:**
 ```python
@@ -692,20 +657,20 @@ df = pd.read_sql("SELECT * FROM iqc_inspections", conn)
 
 ---
 
-## PHU LUC: CACH KHOI PHUC DU LIEU
+## PHỤ LỤC: CÁCH KHÔI PHỤC DỮ LIỆU
 
-### Reset toan bo du lieu
+### Reset toàn bộ dữ liệu
 
 ```powershell
 cd quality-mes\backend
-# Xoa database cu
+# Xóa database cũ
 del quality_mes.db
-# Tao lai du lieu mau
+# Tạo lại dữ liệu mẫu
 python seed.py
 python deploy.py
 ```
 
-### Sao luu du lieu
+### Sao lưu dữ liệu
 
 ```powershell
 # Copy file database
@@ -714,12 +679,12 @@ copy quality-mes\backend\quality_mes.db D:\Backup\quality_mes_backup.db
 
 ---
 
-## HO TRO
+## HỖ TRỢ
 
-- **API Docs:** `http://dia-chi-may:8000/api/docs`
-- **GitHub Issues:** Tao issue tren repo GitHub
-- **Lien he:** Bo phan IT / Quan ly he thong
+- **API Docs:** `http://địa-chỉ-máy:8000/api/docs`
+- **GitHub Issues:** Tạo issue trên repo GitHub
+- **Liên hệ:** Bộ phận IT / Quản lý hệ thống
 
 ---
 
-*Quality MES v1.0 - Tai lieu cap nhat 05/2026*
+*Quality MES v1.0 - Tài liệu cập nhật 05/2026*
