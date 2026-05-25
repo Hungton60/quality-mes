@@ -13,51 +13,59 @@
 5. [IPQC - Kiem tra qua trinh](#5-ipqc---kiem-tra-qua-trinh)
 6. [OQC - Kiem tra thanh pham](#6-oqc---kiem-tra-thanh-pham)
 7. [NCR + CAPA - Xu ly su khong phu hop](#7-ncr--capa---xu-ly-su-khong-phu-hop)
-8. [SPC - Bao cao thong ke](#8-spc---bao-cao-thong-ke)
-9. [Thiet bi do & Hieu chuan](#9-thiet-bi-do--hieu-chuan)
-10. [Quan ly nguoi dung](#10-quan-ly-nguoi-dung)
-11. [Nhat ky hoat dong](#11-nhat-ky-hoat-dong)
-12. [Xuat bao cao Excel](#12-xuat-bao-cao-excel)
-13. [Doi mat khau](#13-doi-mat-khau)
-14. [Tich hop API](#14-tich-hop-api)
+8. [Checklist mau - Tu dong dien muc kiem](#8-checklist-mau---tu-dong-dien-muc-kiem)
+9. [SPC - Bao cao thong ke](#9-spc---bao-cao-thong-ke)
+10. [Thiet bi do & Hieu chuan](#10-thiet-bi-do--hieu-chuan)
+11. [Quan ly nguoi dung](#11-quan-ly-nguoi-dung)
+12. [Nhat ky hoat dong](#12-nhat-ky-hoat-dong)
+13. [Xuat bao cao Excel](#13-xuat-bao-cao-excel)
+14. [Doi mat khau](#14-doi-mat-khau)
+15. [Cai dat PWA (App dien thoai)](#15-cai-dat-pwa-app-dien-thoai)
+16. [Deploy online 24/7 (Render)](#16-deploy-online-247-render)
+17. [Tich hop API](#17-tich-hop-api)
 
 ---
 
 ## 1. CAI DAT VA CHAY UNG DUNG
 
-### Chay tren may ca nhan (Web App)
+### Cach 1: Truy cap Online (Render - mien phi 24/7)
+
+Khong can cai dat gi. Mo trinh duyet, vao link:
+```
+https://quality-mes-xxx.onrender.com
+```
+*(Link duoc cap khi deploy, xem chuong 16)*
+
+Tai khoan mac dinh: `admin` / `Admin123`
+
+### Cach 2: Chay tren may ca nhan (Web App)
 
 **Yeu cau:** Python 3.10+, Node.js 18+
 
+*Buoc 1: Cai thu vien Python*
 ```powershell
-# Buoc 1: Cai thu vien Python
 cd quality-mes\backend
 pip install -r requirements.txt
+```
 
-# Buoc 2: Tao du lieu mau (neu chay lan dau)
+*Buoc 2: Tao du lieu mau (neu chay lan dau)*
+```powershell
 python seed.py
+```
 
-# Buoc 3: Khoi dong may chu
+*Buoc 3: Khoi dong may chu*
+```powershell
 python deploy.py
 ```
 
-May chu se hien:
-```
-============================================================
-  May chu:     http://192.168.1.5:8000
-  Tai khoan mac dinh:
-    admin / Admin123
-============================================================
-```
+May chu hien thi dia chi IP de truy cap trong mang LAN.
 
-**Truy cap:** Mo trinh duyet, nhap `http://192.168.1.5:8000`
+### Cach 3: Streamlit (Online don gian)
 
-### Chay tren Streamlit Cloud (Online, mien phi)
-
-1. Push code len GitHub
-2. Vao https://share.streamlit.io
-3. New app → Chon repo → File: `quality-mes/streamlit_app.py`
-4. Deploy → Chia se link cho team
+1. Vao https://share.streamlit.io
+2. Deploy tu repo GitHub
+3. Giao dien don gian, dung duoc ngay khong can cai dat
+4. Xem them: `streamlit_app.py` trong repo
 
 ---
 
@@ -77,8 +85,17 @@ May chu se hien:
 
 1. Tai trang dang nhap → Chon tab **Dang ky**
 2. Nhap: Ho ten, Email, Ten dang nhap, Mat khau (toi thieu 6 ky tu)
-3. Tai khoan moi mac dinh la **Kiem tra vien**
-4. Admin co the doi vai tro sau
+3. Tu dang ky chi duoc vai tro **inspector** hoac **operator**
+4. Muon lam **qc_manager** hoac **admin**: phai nho admin tao tai khoan
+
+### Ai co quyen tao tai khoan?
+
+| Cach tao | Vai tro duoc phep |
+|----------|-------------------|
+| Tu dang ky (tab Dang ky) | inspector, operator |
+| Admin tao (menu Nguoi dung) | admin, qc_manager, inspector, operator |
+
+Chi **admin** moi vao duoc menu **Nguoi dung** de tao/sua/xoa tai khoan.
 
 ---
 
@@ -269,7 +286,56 @@ Tab **CAPA** hien thi danh sach tat ca CAPA, co the loc theo trang thai.
 
 ---
 
-## 8. SPC - BAO CAO THONG KE
+## 8. CHECKLIST MAU - TU DONG DIEN MUC KIEM
+
+Tinh nang giup tao **mau checklist** co san, khi tao phieu kiem tra chi can chon checklist → he thong tu dong dien tat ca muc kiem.
+
+### 8.1. Tao checklist moi (thu cong)
+
+1. Vao menu **Checklist mau** (ben trai)
+2. Nhan **Tao checklist moi**
+3. Nhap:
+   - **Ma checklist:** VD: `IQC-THEP`
+   - **Ten checklist:** VD: `Kiem tra thep tam 2mm`
+   - **Module:** IQC, OQC, hoac IPQC
+4. Them tung muc kiem:
+   - **Muc kiem:** Ten chi tieu (Do day, Do rong...)
+   - **Tieu chuan:** Mo ta tieu chuan
+   - **Min / Max:** Gioi han dung sai
+5. Nhan dau `+` de them nhieu muc → Nhan **Tao moi**
+
+### 8.2. Import checklist tu file Excel (.xlsx)
+
+1. Chuan bi file Excel, moi **sheet** = 1 checklist. Ten sheet = Ma checklist
+2. Cot: Muc kiem | Tieu chuan | Min | Max
+
+Vi du:
+```
+Sheet: "IQC-THEP-2MM"
+| Muc kiem     | Tieu chuan    | Min  | Max  |
+| Do day       | 2.0mm +/-0.1  | 1.9  | 2.1  |
+| Do rong      | 1200mm +/-2   | 1198 | 1202 |
+```
+
+3. Vao **Checklist mau** → Chon module → Nhan **Import Excel** → Chon file
+
+### 8.3. Import checklist tu file Word (.docx)
+
+1. Chuan bi file Word, moi **bang (table)** = 1 checklist
+2. Cot: Muc kiem | Tieu chuan | Min | Max
+3. Dong tieu de tu dong bo qua
+4. Vao **Checklist mau** → Nhan **Import Excel** → Chon file `.docx`
+
+### 8.4. Su dung checklist khi tao phieu
+
+1. Vao IQC/OQC/IPQC → **Tao phieu kiem tra**
+2. Dien thong tin phieu → Chon **Checklist mau** tu dropdown
+3. Nhan **Tao phieu** → He thong tu dong tao san cac muc kiem
+4. Chi can nhap **gia tri do thuc te** cho tung muc
+
+---
+
+## 9. SPC - BAO CAO THONG KE
 
 ### 8.1. Tong quan
 
@@ -300,7 +366,7 @@ Trang SPC hien thi:
 
 ---
 
-## 9. THIET BI DO & HIEU CHUAN
+## 10. THIET BI DO & HIEU CHUAN
 
 ### 9.1. Them thiet bi do
 
@@ -331,7 +397,7 @@ Bang thiet bi hien thi:
 
 ---
 
-## 10. QUAN LY NGUOI DUNG
+## 11. QUAN LY NGUOI DUNG
 
 *(Danh cho tien)*
 
@@ -367,7 +433,7 @@ Vao trang **Nguoi dung** → Xem tat ca tai khoan
 
 ---
 
-## 11. NHAT KY HOAT DONG
+## 12. NHAT KY HOAT DONG
 
 Trang **Nhat ky** ghi lai moi thao tac trong he thong:
 
@@ -381,7 +447,7 @@ Co the **loc theo module** de xem nhat ky cua tung phan he.
 
 ---
 
-## 12. XUAT BAO CAO EXCEL
+## 13. XUAT BAO CAO EXCEL
 
 ### Xuat danh sach phieu kiem tra
 
@@ -404,7 +470,7 @@ Co the **loc theo module** de xem nhat ky cua tung phan he.
 
 ---
 
-## 13. DOI MAT KHAU
+## 14. DOI MAT KHAU
 
 1. Nhan vao **ten nguoi dung** o goc phai man hinh
 2. Chon **Doi mat khau**
@@ -413,17 +479,81 @@ Co the **loc theo module** de xem nhat ky cua tung phan he.
 
 ---
 
-## 14. TICH HOP API
+## 15. CAI DAT PWA (APP DIEN THOAI)
+
+Cai app Quality MES nhu app native tren dien thoai, co icon ngoai man hinh, khong hien thanh dia chi trinh duyet.
+
+### Android (Chrome)
+
+1. Mo Chrome, vao link app (VD: `https://quality-mes-9.onrender.com`)
+2. Dang nhap → Bam **3 cham** goc phai tren
+3. Chon **Them vao man hinh chinh**
+4. Dat ten → **Them**
+
+### iOS / iPhone / iPad (Safari)
+
+1. Mo Safari, vao link app
+2. Bam nut **Chia se** (hinh vuong mui ten giua thanh duoi)
+3. Chon **Them vao man hinh chinh**
+4. Dat ten → **Them**
+
+### Sau khi cai
+
+- Mo app tu icon ngoai man hinh
+- Giao dien toan man hinh, khong co thanh dia chi trinh duyet
+- Dung nhu app binh thuong
+- Tu dong cap nhat khi co phien ban moi
+
+---
+
+## 16. DEPLOY ONLINE 24/7 (RENDER)
+
+Deploy app len Render de truy cap online mien phi 24/7.
+
+### Buoc 1: Push code len GitHub
+
+```powershell
+cd C:\Users\BOD-Hung\Documents\Opencode
+git push
+```
+
+### Buoc 2: Tao Web Service tren Render
+
+1. Vao https://dashboard.render.com → Dang nhap GitHub
+2. **New +** → **Web Service** → Chon repo `Hungton60/quality-mes`
+3. Dien:
+
+| O | Gia tri |
+|---|---------|
+| Root Directory | `quality-mes` |
+| Build Command | `bash build.sh` |
+| Start Command | `bash start.sh` |
+
+4. Instance Type: **Free**
+5. Nhan **Create Web Service** → Doi 5-7 phut build
+
+Khi thay `Your service is live 🎉` → Copy link chia se cho team.
+
+### Luu y
+
+- Mien phi 750 gio/thang (du dung 24/7)
+- Cold start 30-60 giay lan dau truy cap
+- App ngu sau 15 phut khong dung → mo lai doi vai giay
+- Du lieu SQLite reset khi deploy code moi
+
+---
+
+## 17. TICH HOP API
 
 Quality MES cung cap **REST API** de tich hop voi cac he thong khac (ERP, MES, SCADA, BI...).
 
-### 14.1. Truy cap tai lieu API
+### 17.1. Truy cap tai lieu API
 
 Mo trinh duyet: `http://192.168.1.5:8000/api/docs`
 
 Giao dien Swagger UI cho phep test truc tiep moi API.
 
-### 14.2. Xac thuc API
+### 17.2. Xac thuc API
 
 Tat ca API (tru dang nhap/dang ky) can gui kem JWT token trong header:
 
@@ -438,7 +568,7 @@ Body: {"username": "admin", "password": "Admin123"}
 Response: {"access_token": "eyJ...", "token_type": "bearer", "user": {...}}
 ```
 
-### 14.3. Vi du tich hop
+### 17.3. Vi du tich hop
 
 **Python:**
 ```python
@@ -492,7 +622,7 @@ const res = await fetch(`${BASE}/api/iqc/inspections`, {
 const inspections = await res.json();
 ```
 
-### 14.4. Danh sach API endpoints
+### 17.4. Danh sach API endpoints
 
 | Method | URL | Mo ta |
 |--------|-----|-------|
@@ -536,8 +666,11 @@ const inspections = await res.json();
 | GET | `/api/activity-logs` | Nhat ky hoat dong |
 | POST | `/api/change-password` | Doi mat khau |
 | GET | `/api/aql-table` | Bang tra AQL |
+| GET | `/api/checklists/` | Danh sach checklist mau |
+| POST | `/api/checklists/` | Tao checklist moi |
+| POST | `/api/checklists/import-excel` | Import checklist tu Excel/Word |
 
-### 14.5. Tich hop database truc tiep
+### 17.5. Tich hop database truc tiep
 
 Co the ket noi truc tiep den database SQLite de doc du lieu:
 
