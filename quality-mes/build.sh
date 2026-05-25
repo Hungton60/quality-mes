@@ -6,7 +6,7 @@ echo "=== Building frontend ==="
 cd frontend
 npm install
 npm run build
-echo "=== Copying dist to backend/static ==="
-mkdir -p ../backend/static
-cp -r dist/* ../backend/static/
+echo "=== Copying dist to static ==="
+mkdir -p ../static
+cp -r dist/* ../static/
 echo "=== Build complete ==="
