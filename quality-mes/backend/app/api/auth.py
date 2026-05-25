@@ -20,10 +20,10 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
             detail="Tên đăng nhập hoặc email đã tồn tại",
         )
 
-    if user_data.role not in ("admin", "qc_manager", "inspector", "operator"):
+    if user_data.role not in ("inspector", "operator"):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Vai trò không hợp lệ. Chọn: admin, qc_manager, inspector, operator",
+            detail="Tu dong ky chi duoc chon vai tro: inspector hoac operator. Lien he admin de duoc cap quyen cao hon.",
         )
 
     user = User(
