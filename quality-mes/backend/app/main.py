@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse, HTMLResponse
 import os
 
 from app.api import auth, iqc, oqc, ipqc, spc, ncr, users, equipment, common, export, checklist
-from app.core.database import init_db
+from app.core.database import init_db, SessionLocal
 
 app = FastAPI(title="Quality MES API", version="1.0.0", docs_url="/api/docs")
 
@@ -36,9 +36,24 @@ FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend", "dist")
 @app.on_event("startup")
 def on_startup():
     init_db()
+    from app.models.user import User
+    from app.auth.security import hash_password
+    db = SessionLocal()
+    try:
+        if db.query(User).count() == 0:
+            db.add_all([
+                User(username="admin", email="admin@may.com", hashed_password=hash_password("Admin123"), full_name="Quan ly", role="admin"),
+                User(username="qc_manager", email="qc@may.com", hashed_password=hash_password("Qc123456"), full_name="Truong QC", role="qc_manager"),
+                User(username="inspector1", email="insp1@may.com", hashed_password=hash_password("Insp123456"), full_name="Kiem tra vien A", role="inspector"),
+            ])
+            db.commit()
+    finally:
+        db.close()
 
 
-app.mount("/assets", StaticFiles(directory=os.path.join(FRONTEND_DIR, "assets")), name="assets")
+assets_dir = os.path.join(FRONTEND_DIR, "assets")
+if os.path.isdir(assets_dir):
+    app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
 
 @app.get("/{full_path:path}")
