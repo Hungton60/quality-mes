@@ -13,6 +13,7 @@ import NCRPage from './pages/NCR'
 import UsersPage from './pages/Users'
 import EquipmentPage from './pages/Equipment'
 import ActivityLogPage from './pages/ActivityLog'
+import ChecklistPage from './pages/Checklist'
 
 function AppRoutes() {
   const { user, loading } = useAuth()
@@ -38,6 +39,7 @@ function AppRoutes() {
         <Route path="/users" element={<UsersPage />} />
         <Route path="/equipment" element={<EquipmentPage />} />
         <Route path="/activity" element={<ActivityLogPage />} />
+        <Route path="/checklists" element={<ChecklistPage />} />
       </Route>
     </Routes>
   )

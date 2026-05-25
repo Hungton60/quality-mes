@@ -15,6 +15,7 @@ from app.models.oqc import Product, OQCInspection, OQCResult
 from app.models.ipqc import IPQCInspection, IPQCResult
 from app.models.ncr import NCR, CAPA
 from app.models.equipment import Equipment, ActivityLog
+from app.models.checklist import ChecklistTemplate
 from app.auth.security import hash_password, verify_password
 
 init_db()
@@ -215,6 +216,9 @@ def iqc_inspection_tab(db):
             insp_date = cols2[0].date_input("Ngay kiem", value=date.today())
             insp_name = cols2[1].selectbox("Nguoi kiem", options=list(user_map.keys()), key="iqc_user")
             notes = cols2[2].text_input("Ghi chu")
+            checklists = db.query(ChecklistTemplate).filter(ChecklistTemplate.module == "iqc").all()
+            cl_map = {f"{c.name} ({len(c.items or [])} muc)": c for c in checklists}
+            cl_name = st.selectbox("Checklist mau (tu dong dien muc)", options=["-- Khong dung --"] + list(cl_map.keys()), key="iqc_cl")
             if st.form_submit_button("Tao phieu", type="primary"):
                 if insp_no and mat_name in mat_map and sup_name in sup_map and lot:
                     exist = db.query(IQCInspection).filter(IQCInspection.inspection_no == insp_no).first()
@@ -222,6 +226,11 @@ def iqc_inspection_tab(db):
                     else:
                         insp = IQCInspection(inspection_no=insp_no, material_id=mat_map[mat_name], supplier_id=sup_map[sup_name], lot_no=lot, quantity=qty, sample_size=sample, inspection_date=datetime.combine(insp_date, datetime.min.time()), inspector_id=user_map[insp_name], notes=notes)
                         db.add(insp); db.commit()
+                        ref = db.refresh
+                        if cl_name != "-- Khong dung --" and cl_name in cl_map:
+                            for item in cl_map[cl_name].items or []:
+                                db.add(IQCResult(inspection_id=insp.id, item_name=item.get("item_name",""), specification=item.get("specification",""), measured_value=0, standard_min=item.get("standard_min"), standard_max=item.get("standard_max"), result="pass"))
+                            db.commit()
                         log_activity(db, "create", "iqc", f"Tao phieu IQC {insp_no}")
                         st.success("Tao phieu thanh cong!"); st.rerun()
                 else:
@@ -634,6 +643,51 @@ def users_page():
     db.close()
 
 
+def checklist_page():
+    st.title("Checklist mau")
+    db = get_db()
+    module = st.selectbox("Module", ["iqc", "oqc", "ipqc"], format_func=lambda x: x.upper())
+    templates = db.query(ChecklistTemplate).filter(ChecklistTemplate.module == module).order_by(ChecklistTemplate.name).all()
+
+    with st.expander("Tao checklist moi", expanded=False):
+        with st.form("cl_form"):
+            c1, c2 = st.columns(2)
+            code = c1.text_input("Ma checklist")
+            name = c2.text_input("Ten checklist")
+            items_text = st.text_area("Danh sach muc kiem (moi dong: Ten | Tieu chuan | Min | Max)", height=150,
+                placeholder="Do day | 2.0mm +/- 0.1 | 1.9 | 2.1\nDo rong | 1200mm +/- 2 | 1198 | 1202")
+            if st.form_submit_button("Tao checklist", type="primary"):
+                if code and name and items_text.strip():
+                    items = []
+                    for line in items_text.strip().split("\n"):
+                        parts = [p.strip() for p in line.split("|")]
+                        if parts and parts[0]:
+                            items.append({
+                                "item_name": parts[0],
+                                "specification": parts[1] if len(parts) > 1 else "",
+                                "standard_min": float(parts[2]) if len(parts) > 2 and parts[2] else None,
+                                "standard_max": float(parts[3]) if len(parts) > 3 and parts[3] else None,
+                            })
+                    if items:
+                        exist = db.query(ChecklistTemplate).filter(ChecklistTemplate.code == code).first()
+                        if exist: st.error("Ma checklist da ton tai")
+                        else:
+                            db.add(ChecklistTemplate(code=code, name=name, module=module, items=items))
+                            db.commit(); st.success("Tao thanh cong!"); st.rerun()
+
+    if templates:
+        for t in templates:
+            with st.expander(f"{t.code} - {t.name} ({len(t.items or [])} muc)"):
+                if t.items:
+                    df = pd.DataFrame([{"Muc kiem": i.get("item_name",""), "Tieu chuan": i.get("specification",""), "Min": i.get("standard_min",""), "Max": i.get("standard_max","")} for i in t.items])
+                    st.dataframe(df, use_container_width=True, hide_index=True)
+                if st.button("Xoa", key=f"del_cl_{t.id}"):
+                    db.delete(t); db.commit(); st.rerun()
+    else:
+        st.info("Chua co checklist nao.")
+    db.close()
+
+
 def change_password():
     st.title("Doi mat khau")
     db = get_db()
@@ -668,6 +722,7 @@ def main():
         "⚠️ NCR + CAPA",
         "📊 SPC - Bao cao thong ke",
         "🔧 Thiet bi do",
+        "📋 Checklist mau",
         "👥 Quan ly nguoi dung",
         "🔑 Doi mat khau",
         "🚪 Dang xuat",
@@ -686,6 +741,7 @@ def main():
         "⚠️ NCR + CAPA": ncr_page,
         "📊 SPC - Bao cao thong ke": spc_page,
         "🔧 Thiet bi do": equipment_page,
+        "📋 Checklist mau": checklist_page,
         "👥 Quan ly nguoi dung": users_page,
         "🔑 Doi mat khau": change_password,
     }

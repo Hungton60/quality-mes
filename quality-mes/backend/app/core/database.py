@@ -31,4 +31,5 @@ def init_db():
     from app.models.ipqc import IPQCInspection, IPQCResult  # noqa: F401
     from app.models.ncr import NCR, CAPA  # noqa: F401
     from app.models.equipment import Equipment, ActivityLog  # noqa: F401
+    from app.models.checklist import ChecklistTemplate  # noqa: F401
     Base.metadata.create_all(bind=engine)

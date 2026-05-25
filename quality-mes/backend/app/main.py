@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
 import os
 
-from app.api import auth, iqc, oqc, ipqc, spc, ncr, users, equipment, common, export
+from app.api import auth, iqc, oqc, ipqc, spc, ncr, users, equipment, common, export, checklist
 from app.core.database import init_db
 
 app = FastAPI(title="Quality MES API", version="1.0.0", docs_url="/api/docs")
@@ -27,6 +27,7 @@ app.include_router(users.router)
 app.include_router(equipment.router)
 app.include_router(common.router)
 app.include_router(export.router)
+app.include_router(checklist.router)
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend", "dist")

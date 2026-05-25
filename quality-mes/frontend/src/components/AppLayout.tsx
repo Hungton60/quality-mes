@@ -13,6 +13,7 @@ import {
   MenuUnfoldOutlined,
   ToolOutlined,
   HistoryOutlined,
+  OrderedListOutlined,
   KeyOutlined,
 } from '@ant-design/icons'
 import { useAuth } from '../contexts/AuthContext'
@@ -35,6 +36,7 @@ export default function AppLayout() {
     { key: '/ipqc', icon: <ExperimentOutlined />, label: 'Kiem tra qua trinh (IPQC)' },
     { key: '/oqc', icon: <CheckCircleOutlined />, label: 'Kiem tra thanh pham (OQC)' },
     { key: '/ncr', icon: <WarningOutlined />, label: 'NCR + CAPA' },
+    { key: '/checklists', icon: <OrderedListOutlined />, label: 'Checklist mau' },
     { key: '/equipment', icon: <ToolOutlined />, label: 'Thiet bi do' },
     { key: '/spc', icon: <BarChartOutlined />, label: 'Bao cao (SPC)' },
     { key: '/activity', icon: <HistoryOutlined />, label: 'Nhat ky' },

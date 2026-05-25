@@ -30,12 +30,17 @@ export default function IPQCPage() {
   const [form] = Form.useForm()
   const [resultForm] = Form.useForm()
   const [users, setUsers] = useState<{ id: number; full_name: string }[]>([])
+  const [checklists, setChecklists] = useState<{ id: number; name: string; items: any[] }[]>([])
+  const [selectedChecklist, setSelectedChecklist] = useState<number | null>(null)
 
   const fetchData = async () => {
     setLoading(true)
     try {
-      const [res, uRes] = await Promise.all([api.get('/ipqc/inspections'), api.get('/users/lookup')])
-      setInspections(res.data); setUsers(uRes.data)
+      const [res, uRes, cRes] = await Promise.all([
+        api.get('/ipqc/inspections'), api.get('/users/lookup'),
+        api.get('/checklists/', { params: { module: 'ipqc' } }),
+      ])
+      setInspections(res.data); setUsers(uRes.data); setChecklists(cRes.data)
     }
     catch { message.error('Loi tai du lieu') }
     finally { setLoading(false) }
@@ -45,9 +50,23 @@ export default function IPQCPage() {
 
   const handleCreate = async (values: any) => {
     try {
-      await api.post('/ipqc/inspections', { ...values, inspection_date: values.inspection_date.toISOString() })
+      const res = await api.post('/ipqc/inspections', { ...values, inspection_date: values.inspection_date.toISOString() })
+      const inspId = res.data.id
+      const cl = checklists.find(c => c.id === selectedChecklist)
+      if (cl && cl.items) {
+        for (const item of cl.items) {
+          await api.post(`/ipqc/inspections/${inspId}/results`, {
+            item_name: item.item_name,
+            specification: item.specification || '',
+            measured_value: 0,
+            standard_min: item.standard_min || null,
+            standard_max: item.standard_max || null,
+            result: 'pass',
+          })
+        }
+      }
       message.success('Tao phieu kiem tra thanh cong')
-      setCreateOpen(false); form.resetFields(); fetchData()
+      setCreateOpen(false); form.resetFields(); setSelectedChecklist(null); fetchData()
     } catch (err: any) { message.error(err.response?.data?.detail || 'Loi') }
   }
 
@@ -139,6 +158,15 @@ export default function IPQCPage() {
               <Select showSearch optionFilterProp="label" placeholder="Chon nguoi kiem" options={users.map(u => ({ label: u.full_name, value: u.id }))} />
             </Form.Item>
             <Form.Item name="notes" label="Ghi chu"><Input.TextArea rows={2} /></Form.Item>
+            <Form.Item label="Checklist mau">
+              <Select
+                allowClear
+                placeholder="Chon checklist co san..."
+                value={selectedChecklist}
+                onChange={setSelectedChecklist}
+                options={checklists.map(c => ({ label: `${c.name} (${c.items?.length || 0} muc)`, value: c.id }))}
+              />
+            </Form.Item>
             <Button type="primary" htmlType="submit" block>Tao phieu</Button>
           </Form>
         </Modal>

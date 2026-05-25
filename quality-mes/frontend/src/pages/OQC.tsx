@@ -122,14 +122,17 @@ function InspectionTab() {
   const [resultForm] = Form.useForm()
   const [products, setProducts] = useState<Product[]>([])
   const [users, setUsers] = useState<{ id: number; full_name: string }[]>([])
+  const [checklists, setChecklists] = useState<{ id: number; name: string; items: any[] }[]>([])
+  const [selectedChecklist, setSelectedChecklist] = useState<number | null>(null)
 
   const fetchData = async () => {
     setLoading(true)
     try {
-      const [iRes, pRes, uRes] = await Promise.all([
+      const [iRes, pRes, uRes, cRes] = await Promise.all([
         api.get('/oqc/inspections'), api.get('/oqc/products'), api.get('/users/lookup'),
+        api.get('/checklists/', { params: { module: 'oqc' } }),
       ])
-      setInspections(iRes.data); setProducts(pRes.data); setUsers(uRes.data)
+      setInspections(iRes.data); setProducts(pRes.data); setUsers(uRes.data); setChecklists(cRes.data)
     } catch { message.error('Loi tai du lieu') }
     finally { setLoading(false) }
   }
@@ -138,9 +141,23 @@ function InspectionTab() {
 
   const handleCreate = async (values: any) => {
     try {
-      await api.post('/oqc/inspections', { ...values, inspection_date: values.inspection_date.toISOString() })
+      const res = await api.post('/oqc/inspections', { ...values, inspection_date: values.inspection_date.toISOString() })
+      const inspId = res.data.id
+      const cl = checklists.find(c => c.id === selectedChecklist)
+      if (cl && cl.items) {
+        for (const item of cl.items) {
+          await api.post(`/oqc/inspections/${inspId}/results`, {
+            item_name: item.item_name,
+            specification: item.specification || '',
+            measured_value: 0,
+            standard_min: item.standard_min || null,
+            standard_max: item.standard_max || null,
+            result: 'pass',
+          })
+        }
+      }
       message.success('Tao phieu kiem tra thanh cong')
-      setCreateOpen(false); form.resetFields(); fetchData()
+      setCreateOpen(false); form.resetFields(); setSelectedChecklist(null); fetchData()
     } catch (err: any) { message.error(err.response?.data?.detail || 'Loi') }
   }
 
@@ -212,6 +229,15 @@ function InspectionTab() {
           <Form.Item name="inspection_date" label="Ngay kiem" rules={[{ required: true }]}><DatePicker showTime className="w-full" /></Form.Item>
           <Form.Item name="inspector_id" label="Nguoi kiem" rules={[{ required: true }]}>
             <Select showSearch optionFilterProp="label" placeholder="Chon nguoi kiem" options={users.map(u => ({ label: u.full_name, value: u.id }))} />
+          </Form.Item>
+          <Form.Item label="Checklist mau (tu dong dien muc kiem)">
+            <Select
+              allowClear
+              placeholder="Chon checklist co san..."
+              value={selectedChecklist}
+              onChange={setSelectedChecklist}
+              options={checklists.map(c => ({ label: `${c.name} (${c.items?.length || 0} muc)`, value: c.id }))}
+            />
           </Form.Item>
           <Form.Item name="notes" label="Ghi chu"><Input.TextArea rows={2} /></Form.Item>
           <Button type="primary" htmlType="submit" block>Tao phieu</Button>
