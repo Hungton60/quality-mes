@@ -57,7 +57,16 @@ def on_startup():
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    import glob as g
+    p = PROJECT_ROOT
+    f = FRONTEND_DIR
+    return {
+        "status": "ok",
+        "project_root": p,
+        "frontend_dir": f,
+        "index_exists": os.path.exists(os.path.join(f, "index.html")),
+        "dist_contents": os.listdir(f) if os.path.isdir(f) else "NOT FOUND",
+    }
 
 
 assets_dir = os.path.join(FRONTEND_DIR, "assets")
