@@ -3,5 +3,5 @@ services:
     name: quality-mes
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt && cd frontend && npm install && npm run build
-    startCommand: cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --log-level info --timeout-keep-alive 120
+    buildCommand: bash build.sh
+    startCommand: cd quality-mes/backend && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --log-level info
