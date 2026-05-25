@@ -20,6 +20,21 @@ from app.auth.security import hash_password, verify_password
 
 init_db()
 
+def auto_seed():
+    db = SessionLocal()
+    if db.query(User).count() == 0:
+        db.add_all([
+            User(username="admin", email="admin@may.com", hashed_password=hash_password("Admin123"), full_name="Quan ly", role="admin"),
+            User(username="qc_manager", email="qc@may.com", hashed_password=hash_password("Qc123456"), full_name="Truong QC", role="qc_manager"),
+            User(username="inspector1", email="insp1@may.com", hashed_password=hash_password("Insp123456"), full_name="Kiem tra vien A", role="inspector"),
+            User(username="inspector2", email="insp2@may.com", hashed_password=hash_password("Insp123456"), full_name="Kiem tra vien B", role="inspector"),
+            User(username="operator", email="oper@may.com", hashed_password=hash_password("Oper123456"), full_name="Cong nhan 1", role="operator"),
+        ])
+        db.commit()
+    db.close()
+
+auto_seed()
+
 ROLES = {"admin": "Quan ly", "qc_manager": "Truong QC", "inspector": "Kiem tra vien", "operator": "Cong nhan"}
 STATUS_LABELS = {"pending": "Cho kiem", "pass": "Dat", "fail": "Khong dat"}
 NCR_STATUS = {"open": "Mo", "investigating": "Dang dieu tra", "resolved": "Da xu ly", "closed": "Dong"}
