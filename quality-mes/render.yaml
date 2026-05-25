@@ -4,4 +4,4 @@ services:
     env: python
     plan: free
     buildCommand: bash build.sh
-    startCommand: cd quality-mes/backend && python -m uvicorn app.main:app --host 0.0.0.0 --port $PORT --log-level info
+    startCommand: bash start.sh
