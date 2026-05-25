@@ -31,6 +31,13 @@ app.include_router(checklist.router)
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 FRONTEND_DIR = os.path.join(PROJECT_ROOT, "frontend", "dist")
+STATIC_DIR = os.path.join(PROJECT_ROOT, "backend", "static")
+
+# Try frontend/dist first, fall back to backend/static
+for fd in [FRONTEND_DIR, STATIC_DIR]:
+    if os.path.isdir(fd) and os.path.exists(os.path.join(fd, "index.html")):
+        FRONTEND_DIR = fd
+        break
 
 
 @app.on_event("startup")
