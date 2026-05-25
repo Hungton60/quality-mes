@@ -51,6 +51,11 @@ def on_startup():
         db.close()
 
 
+@app.get("/api/health")
+def health():
+    return {"status": "ok"}
+
+
 assets_dir = os.path.join(FRONTEND_DIR, "assets")
 if os.path.isdir(assets_dir):
     app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
@@ -63,4 +68,4 @@ async def serve_spa(full_path: str, request: Request):
     index_path = os.path.join(FRONTEND_DIR, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
-    return HTMLResponse(content="<h1>Frontend not built. Run: cd frontend && npm run build</h1>", status_code=404)
+    return HTMLResponse(content="<h1>Frontend not built.</h1>", status_code=404)
