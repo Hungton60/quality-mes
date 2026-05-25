@@ -79,23 +79,34 @@ def import_checklist_excel(
     _token: dict = Depends(get_current_user),
 ):
     from io import BytesIO
-    from openpyxl import load_workbook
 
     contents = file.file.read()
-    wb = load_workbook(BytesIO(contents))
+    filename = file.filename or ""
 
+    if filename.lower().endswith(".docx"):
+        return _import_from_docx(contents, module, db)
+    else:
+        return _import_from_xlsx(contents, module, db)
+
+
+def _import_from_xlsx(contents: bytes, module: str, db: Session):
+    from openpyxl import load_workbook
+
+    wb = load_workbook(BytesIO(contents))
     count = 0
+
     for sheet_name in wb.sheetnames:
         ws = wb[sheet_name]
         code = str(sheet_name).strip()
-        name = code
+        code = code.replace(" ", "-").replace("/", "-")
+        name = str(sheet_name).strip()
         items = []
 
         for row in ws.iter_rows(min_row=1, values_only=True):
             if not row or not row[0]:
                 continue
             item_name = str(row[0]).strip()
-            if item_name.lower() in ("muc kiem", "item", "ten muc", "no"):  # skip header
+            if item_name.lower() in ("muc kiem", "item", "ten muc", "no", "mục kiểm", "tiêu chuẩn"):
                 continue
             spec = str(row[1]).strip() if len(row) > 1 and row[1] else ""
             try:
@@ -120,3 +131,60 @@ def import_checklist_excel(
 
     db.commit()
     return {"message": f"Da import {count} checklist tu file Excel"}
+
+
+def _import_from_docx(contents: bytes, module: str, db: Session):
+    from docx import Document
+
+    doc = Document(BytesIO(contents))
+    count = 0
+
+    for idx, table in enumerate(doc.tables):
+        rows = table.rows
+        if len(rows) < 2:
+            continue
+
+        text_before = ""
+        for para in doc.paragraphs:
+            ptext = para.text.strip()
+            if ptext and ptext not in text_before:
+                if not text_before:
+                    text_before = ptext
+                break
+
+        code = f"{module.upper()}-CL-{idx+1:03d}"
+        name = text_before if text_before else f"Checklist {idx+1}"
+        items = []
+
+        for row in rows:
+            cells = [cell.text.strip() for cell in row.cells]
+            if not cells or not cells[0]:
+                continue
+            item_name = cells[0]
+            if item_name.lower() in ("muc kiem", "item", "ten muc", "no", "mục kiểm", "tiêu chuẩn", "stt"):
+                continue
+            spec = cells[1] if len(cells) > 1 else ""
+            try:
+                min_v = float(cells[2]) if len(cells) > 2 and cells[2] else None
+            except: min_v = None
+            try:
+                max_v = float(cells[3]) if len(cells) > 3 and cells[3] else None
+            except: max_v = None
+
+            items.append({
+                "item_name": item_name,
+                "specification": spec,
+                "standard_min": min_v,
+                "standard_max": max_v,
+            })
+
+        if items:
+            name_slug = name[:30].replace(" ", "-").replace("/", "-")
+            code = f"{module.upper()}-{name_slug}"
+            existing = db.query(ChecklistTemplate).filter(ChecklistTemplate.code == code).first()
+            if not existing:
+                db.add(ChecklistTemplate(code=code, name=name, module=module, items=items))
+                count += 1
+
+    db.commit()
+    return {"message": f"Da import {count} checklist tu file Word"}

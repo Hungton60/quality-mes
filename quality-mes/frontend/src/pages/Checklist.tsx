@@ -123,7 +123,7 @@ export default function ChecklistPage() {
             Tao checklist moi
           </Button>
           <Upload
-            accept=".xlsx"
+            accept=".xlsx,.docx"
             showUploadList={false}
             customRequest={async (options: any) => {
               const formData = new FormData()
