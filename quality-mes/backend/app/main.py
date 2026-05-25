@@ -80,11 +80,33 @@ assets_dir = os.path.join(FRONTEND_DIR, "assets")
 if os.path.isdir(assets_dir):
     app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
 
+icons_dir = os.path.join(FRONTEND_DIR, "icons")
+if os.path.isdir(icons_dir):
+    app.mount("/icons", StaticFiles(directory=icons_dir), name="icons")
+
+
+@app.get("/manifest.json")
+def manifest():
+    path = os.path.join(FRONTEND_DIR, "manifest.json")
+    if os.path.exists(path):
+        return FileResponse(path, media_type="application/json")
+    return HTMLResponse(status_code=404)
+
+
+@app.get("/sw.js")
+def service_worker():
+    path = os.path.join(FRONTEND_DIR, "sw.js")
+    if os.path.exists(path):
+        return FileResponse(path, media_type="application/javascript")
+    return HTMLResponse(status_code=404)
+
 
 @app.get("/{full_path:path}")
 async def serve_spa(full_path: str, request: Request):
     if full_path.startswith("api/"):
         return HTMLResponse(status_code=404)
+    if full_path in ("manifest.json", "sw.js", ""):
+        pass
     index_path = os.path.join(FRONTEND_DIR, "index.html")
     if os.path.exists(index_path):
         return FileResponse(index_path)
