@@ -244,6 +244,24 @@ st.markdown("""
     border: 1px solid #e2e8f0 !important;
     box-shadow: 0 8px 24px rgba(0,0,0,.12) !important;
   }
+  /* ── Login screen ── */
+  .login-wrap {
+    max-width: 420px;
+    margin: 6vh auto 0 auto;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 44px 40px 36px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.10);
+  }
+  .login-logo { text-align: center; margin-bottom: 8px; font-size: 36px; }
+  .login-title { text-align: center; font-size: 22px; font-weight: 800;
+    color: #1e293b; margin-bottom: 4px; }
+  .login-sub { text-align: center; font-size: 13px; color: #64748b;
+    margin-bottom: 28px; }
+  .login-err { background: #fff1f2; border: 1px solid #fda4af;
+    color: #be123c; border-radius: 8px; padding: 10px 14px;
+    font-size: 13px; font-weight: 600; margin-bottom: 16px; text-align:center; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -258,7 +276,8 @@ def _init(k, v):
         else:
             st.session_state[k] = load_data(k) or v
 
-_init("current_user",{"Tài khoản":"admin","Họ tên":"Quản lý","Vai trò":"Quản lý"})
+_init("current_user", None)          # None = chưa đăng nhập
+_init("login_error", "")
 _init("users_list",[
     {"Tài khoản":"admin","Họ tên":"Quản lý","Mật khẩu":"admin123","Phân quyền":"Quản lý","Trạng thái":"Hoạt động"},
     {"Tài khoản":"qc_trang","Họ tên":"Trưởng QC","Mật khẩu":"trang123","Phân quyền":"Trưởng QC","Trạng thái":"Hoạt động"},
@@ -290,6 +309,78 @@ _init("log_list",[
     {"Thời gian":"09-06-2026 11:30","Tài khoản":"admin","Phân hệ":"IQC","Hành động":"Tạo mới","Chi tiết":"Khởi tạo phiếu IQC-002"},
 ])
 _init("spc_df", None)
+
+# ══════════════════════════════════════════════════════════
+# HÀM GHI LOG (định nghĩa sớm để dùng trong login)
+# ══════════════════════════════════════════════════════════
+def ghi_log_anon(action, detail):
+    st.session_state.log_list.insert(0,{
+        "Thời gian": datetime.now().strftime("%d-%m-%Y %H:%M"),
+        "Tài khoản": "system", "Phân hệ": "Auth",
+        "Hành động": action, "Chi tiết": detail})
+    save_data("log_list", st.session_state.log_list)
+
+# ══════════════════════════════════════════════════════════
+# LOGIN SCREEN — hiển thị nếu chưa đăng nhập
+# ══════════════════════════════════════════════════════════
+if st.session_state.current_user is None:
+    # Ẩn sidebar khi chưa đăng nhập
+    st.markdown("""<style>
+        section[data-testid="stSidebar"]{display:none!important}
+        .block-container{padding-top:0!important}
+    </style>""", unsafe_allow_html=True)
+
+    # Căn giữa form đăng nhập
+    _, col_c, _ = st.columns([1, 1.4, 1])
+    with col_c:
+        st.markdown(f"""
+        <div class="login-wrap">
+          <div class="login-logo">
+            <img src="{LOGO_SRC}" style="width:56px;height:auto;border-radius:8px"/>
+          </div>
+          <div class="login-title">QUALITY MES</div>
+          <div class="login-sub">Hệ thống quản lý chất lượng sản xuất · v1.0</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Hiện lỗi nếu có
+        if st.session_state.login_error:
+            st.markdown(
+                f'<div class="login-err">⚠️ {st.session_state.login_error}</div>',
+                unsafe_allow_html=True)
+
+        with st.form("frm_login", clear_on_submit=False):
+            username = st.text_input("Tài khoản", placeholder="Nhập tên tài khoản...")
+            password = st.text_input("Mật khẩu", type="password",
+                                     placeholder="Nhập mật khẩu...")
+            submitted = st.form_submit_button("🔐 Đăng nhập",
+                                              use_container_width=True, type="primary")
+            if submitted:
+                if not username or not password:
+                    st.session_state.login_error = "Vui lòng điền đầy đủ tài khoản và mật khẩu."
+                    st.rerun()
+                else:
+                    # Tìm user trong danh sách
+                    matched = None
+                    for u in st.session_state.users_list:
+                        if (u["Tài khoản"].strip().lower() == username.strip().lower()
+                                and u["Mật khẩu"] == password
+                                and u.get("Trạng thái","Hoạt động") == "Hoạt động"):
+                            matched = u
+                            break
+                    if matched:
+                        st.session_state.current_user = {
+                            "Tài khoản": matched["Tài khoản"],
+                            "Họ tên":    matched["Họ tên"],
+                            "Vai trò":   matched["Phân quyền"],
+                        }
+                        st.session_state.login_error = ""
+                        ghi_log_anon("Đăng nhập", f"{matched['Họ tên']} đăng nhập thành công")
+                        st.rerun()
+                    else:
+                        st.session_state.login_error = "Tài khoản hoặc mật khẩu không đúng."
+                        st.rerun()
+    st.stop()   # Không render gì thêm khi chưa login
 
 # ══════════════════════════════════════════════════════════
 # SIDEBAR
@@ -338,6 +429,13 @@ MENU = ["📊 Bảng điều khiển","✅ Kiểm tra đầu vào (IQC)","🧪 K
         "📦 Kiểm tra thành phẩm (OQC)","⚠️ NCR + CAPA","🔧 Thiết bị đo",
         "📊 Báo cáo (SPC)","📜 Nhật ký hoạt động","👤 Quản lý người dùng"]
 page = st.sidebar.radio("DANH MỤC", MENU, index=0)
+
+st.sidebar.markdown("---")
+if st.sidebar.button("🚪 Đăng xuất", use_container_width=True):
+    ghi_log_anon("Đăng xuất", f"{cu['Họ tên']} đăng xuất")
+    st.session_state.current_user = None
+    st.session_state.login_error  = ""
+    st.rerun()
 
 # ══════════════════════════════════════════════════════════
 # TIỆN ÍCH CHUNG
@@ -1486,44 +1584,91 @@ elif page == "👤 Quản lý người dùng":
     st.markdown("##### ✏️ Thao tác tài khoản")
     for i,u in enumerate(st.session_state.users_list):
         is_self  = u["Tài khoản"]==cu["Tài khoản"]
-        is_admin = u["Tài khoản"]=="admin"
+        is_admin_acc = u["Tài khoản"]=="admin"
         u_role   = u["Phân quyền"]
 
-        # Quyền đổi mật khẩu
-        # - Quản lý: đổi pass tất cả
-        # - Trưởng QC & KTV: chỉ đổi pass của chính mình
-        can_pass = (role=="Quản lý") or is_self
-
-        # Quyền xóa tài khoản
-        # - Quản lý: xóa tất cả trừ admin
-        # - Trưởng QC: chỉ xóa KTV
-        # - KTV: không được xóa ai
+        # Quyền sửa thông tin & đổi mật khẩu
+        can_edit = (role=="Quản lý") or is_self
+        # Quyền xóa
         can_del = False
-        if role=="Quản lý" and not is_admin:
-            can_del = True
-        elif role=="Trưởng QC" and u_role=="Kiểm tra viên":
-            can_del = True
+        if role=="Quản lý" and not is_admin_acc: can_del = True
+        elif role=="Trưởng QC" and u_role=="Kiểm tra viên": can_del = True
 
-        badge = "🔓" if (can_pass or can_del) else "🔒"
+        badge = "🔓" if (can_edit or can_del) else "🔒"
         with st.expander(f"{badge}  **{u['Họ tên']}** ({u['Tài khoản']}) — {u['Phân quyền']}"):
-            if not can_pass and not can_del:
+            if not can_edit and not can_del:
                 st.caption("🔒 Không có quyền thao tác tài khoản này"); continue
-            ca,cb,_=st.columns([2,2,4])
-            if can_pass:
-                with ca.popover("🔑 Đổi mật khẩu"):
+
+            ca, cb, cc, _ = st.columns([2, 2, 2, 2])
+
+            # ── Nút SỬA tài khoản ──────────────────────────
+            if can_edit:
+                with ca.popover("✏️ Sửa tài khoản"):
+                    with st.form(f"frm_edit_user_{i}"):
+                        st.markdown(f"**Sửa: {u['Họ tên']}**")
+                        new_nm = st.text_input("Họ và tên", value=u["Họ tên"])
+                        new_un = st.text_input("Tên tài khoản", value=u["Tài khoản"])
+                        # Chỉ Admin mới đổi được phân quyền
+                        if role == "Quản lý":
+                            ro_opts = ["Quản lý","Trưởng QC","Kiểm tra viên"]
+                            cur_ro  = u["Phân quyền"]
+                            new_ro  = st.selectbox("Phân quyền", ro_opts,
+                                        index=ro_opts.index(cur_ro) if cur_ro in ro_opts else 0)
+                        else:
+                            new_ro = u["Phân quyền"]
+                            st.caption(f"Phân quyền: {new_ro}")
+                        tt_opts = ["Hoạt động","Tạm khóa"]
+                        cur_tt  = u.get("Trạng thái","Hoạt động")
+                        new_tt  = st.selectbox("Trạng thái", tt_opts,
+                                    index=tt_opts.index(cur_tt) if cur_tt in tt_opts else 0)
+                        if st.form_submit_button("💾 Lưu thay đổi", use_container_width=True):
+                            # Kiểm tra trùng tài khoản (nếu đổi tên TK)
+                            if new_un != u["Tài khoản"] and any(
+                                    x["Tài khoản"]==new_un for j,x in enumerate(st.session_state.users_list) if j!=i):
+                                st.error("Tên tài khoản đã tồn tại!")
+                            else:
+                                st.session_state.users_list[i].update({
+                                    "Họ tên": new_nm,
+                                    "Tài khoản": new_un,
+                                    "Phân quyền": new_ro,
+                                    "Trạng thái": new_tt,
+                                })
+                                # Nếu đang sửa chính mình → cập nhật current_user
+                                if is_self:
+                                    st.session_state.current_user.update({
+                                        "Tài khoản": new_un,
+                                        "Họ tên": new_nm,
+                                        "Vai trò": new_ro,
+                                    })
+                                ghi_log("Users","Sửa TK",f"Sửa {u['Tài khoản']} → {new_un}")
+                                persist("users_list")
+                                st.success("✅ Đã lưu!")
+                                st.rerun()
+
+            # ── Nút ĐỔI MẬT KHẨU ───────────────────────────
+            if can_edit:
+                with cb.popover("🔑 Đổi mật khẩu"):
                     with st.form(f"frm_pw_{i}"):
-                        p1=st.text_input("Mật khẩu mới",type="password")
-                        p2=st.text_input("Xác nhận lại",type="password")
-                        if st.form_submit_button("Xác nhận"):
-                            if p1 and p1==p2:
-                                st.session_state.users_list[i]["Mật khẩu"]=p1
+                        p1 = st.text_input("Mật khẩu mới", type="password")
+                        p2 = st.text_input("Xác nhận lại", type="password")
+                        if st.form_submit_button("✅ Xác nhận", use_container_width=True):
+                            if not p1:
+                                st.error("Mật khẩu không được trống!")
+                            elif p1 != p2:
+                                st.error("Mật khẩu xác nhận không khớp!")
+                            else:
+                                st.session_state.users_list[i]["Mật khẩu"] = p1
                                 ghi_log("Users","Đổi pass",f"Đổi pass {u['Tài khoản']}")
-                                st.success("✅ Đã đổi!"); st.rerun()
-                            elif p1!=p2: st.error("Mật khẩu không khớp!")
-                            else: st.error("Mật khẩu trống!")
+                                persist("users_list")   # ← lưu ngay
+                                st.success("✅ Đã đổi mật khẩu!")
+                                st.rerun()
+
+            # ── Nút XÓA tài khoản ───────────────────────────
             if can_del:
-                with cb.popover("🗑️ Xóa tài khoản"):
+                with cc.popover("🗑️ Xóa"):
                     st.warning(f"Xác nhận xóa **{u['Họ tên']}**?")
-                    if st.button("✅ Xác nhận xóa",key=f"confirm_del_{i}"):
+                    if st.button("✅ Xác nhận xóa", key=f"confirm_del_{i}"):
                         st.session_state.users_list.pop(i)
-                        ghi_log("Users","Xóa TK",f"Xóa {u['Tài khoản']}"); persist("users_list"); st.rerun()
+                        ghi_log("Users","Xóa TK",f"Xóa {u['Tài khoản']}")
+                        persist("users_list")
+                        st.rerun()
