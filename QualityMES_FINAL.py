@@ -967,25 +967,47 @@ elif page == "⚠️ NCR + CAPA":
 elif page == "🔧 Thiết bị đo":
     page_header("🔧 Thiết bị đo & Hiệu chuẩn", st.session_state.dev_list, "Devices.csv","dl_dev")
 
-    with st.expander("➕ Đăng ký thiết bị mới"):
-        with st.form("frm_dev_new",clear_on_submit=True):
-            c1,c2=st.columns(2)
-            ma=c1.text_input("Mã TB *"); ten=c2.text_input("Tên thiết bị *")
-            ser=c1.text_input("Số serie"); vt=c2.text_input("Vị trí")
-            ck=c1.selectbox("Chu kỳ HC",["06 tháng","12 tháng"]); tt=c2.selectbox("Tình trạng",["Sử dụng tốt","Chờ hiệu chuẩn","Hỏng"])
-            last=c1.date_input("HC lần cuối",value=date.today()); nxt=c2.date_input("Hạn HC",value=date.today())
-            un_d=unames()
-            nl_d=st.selectbox("Người lập",un_d,index=un_d.index(cu["Họ tên"]) if cu["Họ tên"] in un_d else 0)
-            gc=st.text_input("Ghi chú")
-            if st.form_submit_button("✅ Đăng ký",use_container_width=True):
-                if ma and ten:
-                    st.session_state.dev_list.append({
-                        "Mã TB":ma,"Tên thiết bị":ten,"Số serie":ser or "-","Vị trí":vt or "-",
-                        "Chu kỳ HC":ck,"HC lần cuối":last.strftime("%d-%m-%Y"),
-                        "Hạn HC":nxt.strftime("%d-%m-%Y"),"Tình trạng":tt,
-                        "Người lập":nl_d,"Ghi chú":gc or "-","Người tạo":cu["Tài khoản"],
-                    }); ghi_log("TB","Đăng ký",f"Đăng ký {ma}"); persist("dev_list"); st.rerun()
-                else: st.error("Điền Mã TB và Tên thiết bị")
+    if "show_dev_form" not in st.session_state:
+        st.session_state.show_dev_form = False
+    if st.button("➕ Đăng ký thiết bị mới", key="btn_show_dev_form"):
+        st.session_state.show_dev_form = True
+
+    if st.session_state.show_dev_form:
+        with st.container():
+            st.markdown("---")
+            st.markdown("#### ➕ Đăng ký thiết bị mới")
+            with st.form("frm_dev_new", clear_on_submit=True):
+                c1,c2=st.columns(2)
+                ma=c1.text_input("Mã TB *"); ten=c2.text_input("Tên thiết bị *")
+                ser=c1.text_input("Số serie"); vt=c2.text_input("Vị trí")
+                ck=c1.selectbox("Chu kỳ HC",["06 tháng","12 tháng"])
+                tt=c2.selectbox("Tình trạng",["Sử dụng tốt","Chờ hiệu chuẩn","Hỏng"])
+                last=c1.date_input("HC lần cuối",value=date.today())
+                nxt=c2.date_input("Hạn HC",value=date.today())
+                un_d=unames()
+                nl_d=st.selectbox("Người lập",un_d,index=un_d.index(cu["Họ tên"]) if cu["Họ tên"] in un_d else 0)
+                gc=st.text_input("Ghi chú")
+                btn_ok, btn_cancel, _ = st.columns([1.5, 1.5, 6])
+                submitted = btn_ok.form_submit_button("✅ Đăng ký", use_container_width=True)
+                cancelled = btn_cancel.form_submit_button("❌ Hủy", use_container_width=True)
+                if submitted:
+                    if ma and ten:
+                        st.session_state.dev_list.append({
+                            "Mã TB":ma,"Tên thiết bị":ten,"Số serie":ser or "-","Vị trí":vt or "-",
+                            "Chu kỳ HC":ck,"HC lần cuối":last.strftime("%d-%m-%Y"),
+                            "Hạn HC":nxt.strftime("%d-%m-%Y"),"Tình trạng":tt,
+                            "Người lập":nl_d,"Ghi chú":gc or "-","Người tạo":cu["Tài khoản"],
+                        })
+                        ghi_log("TB","Đăng ký",f"Đăng ký {ma}")
+                        persist("dev_list")
+                        st.session_state.show_dev_form = False
+                        st.rerun()
+                    else:
+                        st.error("Vui lòng điền Mã TB và Tên thiết bị")
+                if cancelled:
+                    st.session_state.show_dev_form = False
+                    st.rerun()
+            st.markdown("---")
 
     def dev_edit(idx,row):
         with st.form(f"frm_edit_dev_{idx}",clear_on_submit=False):
@@ -1000,10 +1022,12 @@ elif page == "🔧 Thiết bị đo":
             tt=c2.selectbox("Tình trạng",tt_o,index=tt_o.index(cur_tt) if cur_tt in tt_o else 0)
             last=c1.text_input("HC lần cuối",value=row.get("HC lần cuối",""))
             nxt=c2.text_input("Hạn HC",value=row.get("Hạn HC",""))
-            gc=st.text_input("Ghi chú",value=row.get("Ghi chú",""))
+            un_de=unames(); cur_nl_de=row.get("Người lập",cu["Họ tên"])
+            nl_de=c1.selectbox("Người lập",un_de,
+                index=un_de.index(cur_nl_de) if cur_nl_de in un_de else 0,
+                key=f"nl_dev_{idx}")
+            gc=c2.text_input("Ghi chú",value=row.get("Ghi chú",""))
             if st.form_submit_button("💾 Lưu",use_container_width=True):
-                un_de=unames(); cur_nl_de=row.get("Người lập",cu["Họ tên"])
-                nl_de=st.selectbox("Người lập",un_de,index=un_de.index(cur_nl_de) if cur_nl_de in un_de else 0,key=f"nl_dev_{idx}")
                 st.session_state.dev_list[idx].update({
                     "Mã TB":ma,"Tên thiết bị":ten,"Số serie":ser,"Vị trí":vt,
                     "Chu kỳ HC":ck,"HC lần cuối":last,"Hạn HC":nxt,"Tình trạng":tt,
