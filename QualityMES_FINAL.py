@@ -1355,24 +1355,27 @@ elif page == "📊 Báo cáo (SPC)":
 elif page == "📜 Nhật ký hoạt động":
     page_header("📜 Nhật ký hoạt động", st.session_state.log_list, "Logs.csv","dl_log")
 
-    # ── Backup & Restore toàn bộ dữ liệu ──
-    with st.expander("💾 Sao lưu & Khôi phục dữ liệu"):
-        bc1, bc2 = st.columns(2)
-        with bc1:
-            st.markdown("**📦 Sao lưu toàn bộ dữ liệu**")
-            st.caption("Tải file backup JSON chứa tất cả phiếu, tài khoản, nhật ký.")
-            bk_data = backup_json(st.session_state)
-            st.download_button("📥 Tải file backup",data=bk_data,
-                file_name=f"QualityMES_backup_{datetime.now().strftime('%Y%m%d_%H%M')}.json",
-                mime="application/json", key="btn_backup")
-        with bc2:
-            st.markdown("**🔄 Khôi phục từ backup**")
-            st.caption("Upload file backup JSON để khôi phục dữ liệu.")
-            up_restore = st.file_uploader("Chọn file backup",type=["json"],key="up_restore")
-            if up_restore:
-                ok, msg = restore_json(up_restore.read(), st.session_state)
-                if ok: st.success(msg); st.rerun()
-                else: st.error(msg)
+    # ── Backup & Restore — chỉ Quản lý và Trưởng QC ──
+    if cu["Vai trò"] in ["Quản lý", "Trưởng QC"]:
+        with st.expander("💾 Sao lưu & Khôi phục dữ liệu"):
+            bc1, bc2 = st.columns(2)
+            with bc1:
+                st.markdown("**📦 Sao lưu toàn bộ dữ liệu**")
+                st.caption("Tải file backup JSON chứa tất cả phiếu, tài khoản, nhật ký.")
+                bk_data = backup_json(st.session_state)
+                st.download_button("📥 Tải file backup",data=bk_data,
+                    file_name=f"QualityMES_backup_{datetime.now().strftime('%Y%m%d_%H%M')}.json",
+                    mime="application/json", key="btn_backup")
+            with bc2:
+                st.markdown("**🔄 Khôi phục từ backup**")
+                st.caption("Upload file backup JSON để khôi phục dữ liệu.")
+                up_restore = st.file_uploader("Chọn file backup",type=["json"],key="up_restore")
+                if up_restore:
+                    ok, msg = restore_json(up_restore.read(), st.session_state)
+                    if ok: st.success(msg); st.rerun()
+                    else: st.error(msg)
+    else:
+        st.info("🔒 Chức năng Sao lưu & Khôi phục chỉ dành cho Quản lý và Trưởng QC.")
     st.write("")
 
     df_l=pd.DataFrame(st.session_state.log_list)
